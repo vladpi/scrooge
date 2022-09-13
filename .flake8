@@ -1,0 +1,21 @@
+[flake8]
+format = wemake
+show-source = true
+max-line-length = 100
+extend-ignore = E203
+ignore =
+    D,
+    WPS300,
+    WPS305,
+    WPS323,
+    WPS404,
+    B008,
+    ANN101,
+    ANN102,
+    ANN401
+exclude = .git,.venv
+per-file-ignores =
+    app/settings/app.py: WPS115, WPS431, WPS306
+    __init__.py: F401, WPS410, WPS412
+    app/logging.py: WPS226
+max-try-body-length = 10
