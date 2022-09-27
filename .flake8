@@ -5,17 +5,20 @@ max-line-length = 100
 extend-ignore = E203
 ignore =
     D,
+    WPS202,
     WPS300,
     WPS305,
     WPS323,
+    WPS348,
     WPS404,
     B008,
     ANN101,
     ANN102,
     ANN401
-exclude = .git,.venv
+exclude = .git,.venv,migrations/env.py
 per-file-ignores =
     app/settings/app.py: WPS115, WPS431, WPS306
     __init__.py: F401, WPS410, WPS412
     app/logging.py: WPS226
+    migrations/*: WPS102, WPS118, WPS226
 max-try-body-length = 10

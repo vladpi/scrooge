@@ -3,7 +3,7 @@ import logging
 import aiogram
 import databases
 
-from app import settings
+from app import repositories, settings
 from libs.context import ContextBase
 
 from .bot import create_bot, create_dispatcher
@@ -19,6 +19,9 @@ class Context(ContextBase):
     dispatcher: aiogram.Dispatcher
 
     db: databases.Database
+
+    users_repo: repositories.UsersRepository
+    telegram_users_repo: repositories.TelegramUsersRepository
 
     async def _do_close(self) -> None:
         bot_sesion = await self.bot.get_session()
@@ -53,12 +56,17 @@ async def _make_context() -> Context:  # noqa: WPS210
     )
     dispatcher = await create_dispatcher(bot, bot_settings.REDIS_URL)
 
+    users_repo = repositories.UsersRepositoryImpl(db)
+    telegram_users_repo = repositories.TelegramUsersRepositoryImpl(db)
+
     context = Context(
         app_settings=app_settings,
         bot_settings=bot_settings,
         bot=bot,
         dispatcher=dispatcher,
         db=db,
+        users_repo=users_repo,
+        telegram_users_repo=telegram_users_repo,
     )
 
     # bad hack :(

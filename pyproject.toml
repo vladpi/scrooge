@@ -17,6 +17,7 @@ gunicorn = "^20.1.0"
 uvicorn = "^0.18.3"
 aioredis = "^2.0.1"
 colorlog = "^6.7.0"
+psycopg2 = "^2.9.3"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.971"

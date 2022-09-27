@@ -5,6 +5,7 @@ from aiogram.dispatcher import FSMContext, filters
 
 if TYPE_CHECKING:
     from app.infra.bot.context import Context
+    from app.models import TelegramUser
 
 
 def setup_handlers(dispatcher: Dispatcher) -> None:
@@ -15,5 +16,10 @@ def setup_handlers(dispatcher: Dispatcher) -> None:
     )
 
 
-async def start(message: types.Message, state: FSMContext, ctx: 'Context') -> None:
-    await message.answer('Hello, world!')
+async def start(
+    message: types.Message,
+    state: FSMContext,
+    ctx: 'Context',
+    user: 'TelegramUser',
+) -> None:
+    await message.answer(f'Hello, {user.first_name}!')
