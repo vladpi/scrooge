@@ -1,5 +1,6 @@
 import imp
 
+from .categories import CategoriesRepository, CategoriesRepositoryImpl
 from .exceptions import (
     CreateError,
     DuplicateError,
@@ -14,3 +15,4 @@ from .users import (
     UsersRepository,
     UsersRepositoryImpl,
 )
+from .workspaces import WorkspacesRepository, WorkspacesRepositoryImpl

@@ -57,6 +57,8 @@ class UserMiddleware(BaseMiddleware):
         return await create_or_update_user_from_telegram(
             ctx.users_repo,
             ctx.telegram_users_repo,
+            ctx.workspaces_repo,
+            ctx.categories_repo,
             CreateOrUpdateTelegramUserRequest(
                 telegram_user_id=from_user.id,
                 username=from_user.username,
