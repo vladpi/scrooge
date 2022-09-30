@@ -55,10 +55,7 @@ class UserMiddleware(BaseMiddleware):
 
     async def _fetch_user(self, ctx: 'Context', from_user: types.User) -> models.TelegramUser:
         return await create_or_update_user_from_telegram(
-            ctx.users_repo,
-            ctx.telegram_users_repo,
-            ctx.workspaces_repo,
-            ctx.categories_repo,
+            ctx.repos,
             CreateOrUpdateTelegramUserRequest(
                 telegram_user_id=from_user.id,
                 username=from_user.username,

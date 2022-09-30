@@ -20,10 +20,7 @@ class Context(ContextBase):
 
     db: databases.Database
 
-    users_repo: repositories.UsersRepository
-    telegram_users_repo: repositories.TelegramUsersRepository
-    workspaces_repo: repositories.WorkspacesRepository
-    categories_repo: repositories.CategoriesRepository
+    repos: repositories.Repositories
 
     async def _do_close(self) -> None:
         bot_sesion = await self.bot.get_session()
@@ -62,6 +59,7 @@ async def _make_context() -> Context:  # noqa: WPS210
     telegram_users_repo = repositories.TelegramUsersRepositoryImpl(db)
     workspaces_repo = repositories.WorkspacesRepositoryImpl(db)
     categories_repo = repositories.CategoriesRepositoryImpl(db)
+    accounts_repo = repositories.AccountsRepositoryImpl(db)
 
     context = Context(
         app_settings=app_settings,
@@ -69,10 +67,13 @@ async def _make_context() -> Context:  # noqa: WPS210
         bot=bot,
         dispatcher=dispatcher,
         db=db,
-        users_repo=users_repo,
-        telegram_users_repo=telegram_users_repo,
-        workspaces_repo=workspaces_repo,
-        categories_repo=categories_repo,
+        repos=repositories.Repositories(
+            users_repo=users_repo,
+            telegram_users_repo=telegram_users_repo,
+            workspaces_repo=workspaces_repo,
+            categories_repo=categories_repo,
+            accounts_repo=accounts_repo,
+        ),
     )
 
     # bad hack :(
