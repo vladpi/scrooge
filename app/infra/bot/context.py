@@ -60,6 +60,7 @@ async def _make_context() -> Context:  # noqa: WPS210
     workspaces_repo = repositories.WorkspacesRepositoryImpl(db)
     categories_repo = repositories.CategoriesRepositoryImpl(db)
     accounts_repo = repositories.AccountsRepositoryImpl(db)
+    transactions_repo = repositories.TransactionsRepositoryImpl(db)
 
     context = Context(
         app_settings=app_settings,
@@ -73,6 +74,7 @@ async def _make_context() -> Context:  # noqa: WPS210
             workspaces_repo=workspaces_repo,
             categories_repo=categories_repo,
             accounts_repo=accounts_repo,
+            transactions_repo=transactions_repo,
         ),
     )
 

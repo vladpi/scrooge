@@ -11,6 +11,7 @@ from .exceptions import (
     RepositoryError,
     UpdateError,
 )
+from .transactions import TranasactionssRepository, TransactionsRepositoryImpl
 from .users import (
     TelegramUsersRepository,
     TelegramUsersRepositoryImpl,

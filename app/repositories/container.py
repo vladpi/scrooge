@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 from .accounts import AccountsRepository
 from .categories import CategoriesRepository
+from .transactions import TranasactionssRepository
 from .users import TelegramUsersRepository, UsersRepository
 from .workspaces import WorkspacesRepository
 
@@ -12,6 +13,7 @@ class Repositories(BaseModel):
     workspaces_repo: WorkspacesRepository
     categories_repo: CategoriesRepository
     accounts_repo: AccountsRepository
+    transactions_repo: TranasactionssRepository
 
     class Config:  # noqa: WPS306, WPS431
         arbitrary_types_allowed = True
