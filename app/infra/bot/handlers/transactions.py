@@ -18,7 +18,7 @@ from app.domains import (
 )
 from app.repositories.exceptions import NotFoundError
 
-from ..states import AddOutcomeTransactionStates
+from ..states import AddTransactionStates
 
 if TYPE_CHECKING:
     from app.infra.bot.context import Context
@@ -44,19 +44,19 @@ def setup_handlers(dispatcher: Dispatcher) -> None:
     )
     dispatcher.register_message_handler(
         txn_account_handler,
-        state=AddOutcomeTransactionStates.account,
+        state=AddTransactionStates.account,
     )
     dispatcher.register_message_handler(
         txn_amount_and_comment_handler,
-        state=AddOutcomeTransactionStates.amount_and_comment,
+        state=AddTransactionStates.amount_and_comment,
     )
     dispatcher.register_message_handler(
         txn_at_date_handler,
-        state=AddOutcomeTransactionStates.at_date,
+        state=AddTransactionStates.at_date,
     )
     dispatcher.register_message_handler(
         txn_category_handler,
-        state=AddOutcomeTransactionStates.category,
+        state=AddTransactionStates.category,
     )
 
 
@@ -81,7 +81,7 @@ async def txn_entry_handler(  # noqa: WPS211
         text='Выбери счет',
         reply_markup=reply_markup,
     )
-    await AddOutcomeTransactionStates.account.set()
+    await AddTransactionStates.account.set()
 
 
 async def txn_account_handler(
@@ -105,7 +105,7 @@ async def txn_account_handler(
         text='Отправь сумму и комментарий',
         reply_markup=types.ReplyKeyboardRemove(),
     )
-    await AddOutcomeTransactionStates.amount_and_comment.set()
+    await AddTransactionStates.amount_and_comment.set()
 
 
 async def txn_amount_and_comment_handler(
@@ -133,7 +133,7 @@ async def txn_amount_and_comment_handler(
         text='Выбери или отправь дату',
         reply_markup=reply_markup,
     )
-    await AddOutcomeTransactionStates.at_date.set()
+    await AddTransactionStates.at_date.set()
 
 
 async def txn_at_date_handler(
@@ -168,7 +168,7 @@ async def txn_at_date_handler(
         text='Выбери категорию',
         reply_markup=reply_markup,
     )
-    await AddOutcomeTransactionStates.category.set()
+    await AddTransactionStates.category.set()
 
 
 async def txn_category_handler(
