@@ -3,7 +3,7 @@ from typing import Optional
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
-from aiogram.types import ParseMode
+from aiogram.types import BotCommand, ParseMode
 from pydantic import RedisDsn
 
 from .handlers import HANDLERS
@@ -23,6 +23,13 @@ async def create_bot(
 
         if current_url != url:
             await bot.set_webhook(url=url, drop_pending_updates=True)
+
+    await bot.set_my_commands(
+        commands=[
+            BotCommand('outcome', 'Добавить расход'),
+            BotCommand('income', 'Добавить доход'),
+        ],
+    )
 
     return bot
 
