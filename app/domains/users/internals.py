@@ -12,7 +12,6 @@ async def create_or_update_user_from_telegram(
     repos: repositories.Repositories,
     request: CreateOrUpdateTelegramUserRequest,
 ) -> models.TelegramUser:
-    logger.info(f'Try to find Telegram User with id#{request.telegram_user_id}')
     try:
         telegram_user = await repos.telegram_users_repo.get(request.telegram_user_id)
         return await repos.telegram_users_repo.update(
@@ -54,3 +53,10 @@ async def create_user_from_telegram(
     )
 
     return telegram_user
+
+
+async def get_user_from_telegram(
+    repos: repositories.Repositories,
+    id_: models.TelegramUserId,
+) -> models.TelegramUser:
+    return await repos.telegram_users_repo.get(id_)

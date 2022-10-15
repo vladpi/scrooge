@@ -24,3 +24,18 @@ async def create_user_default_categories(
         categories.append(category)
 
     return categories
+
+
+async def get_workspace_categories(
+    repos: repositories.Repositories,
+    workspace_id: models.WorkspaceId,
+) -> List[models.Category]:
+    return await repos.categories_repo.get_by_workspace_id(workspace_id)
+
+
+async def get_workspace_category_by_name(
+    repos: repositories.Repositories,
+    workspace_id: models.WorkspaceId,
+    name: str,
+) -> models.Category:
+    return await repos.categories_repo.get_by_workspace_id_and_name(workspace_id, name)

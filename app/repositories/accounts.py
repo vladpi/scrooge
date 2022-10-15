@@ -1,7 +1,7 @@
 import abc
 import logging
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 import sqlalchemy as sa
 
@@ -36,8 +36,18 @@ class AccountsRepository(  # noqa: B024 FIXME
     async def update_balance(self, id_: models.AccountId, diff: Decimal) -> models.Account:
         raise NotImplementedError
 
+    async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> List[models.Account]:
+        raise NotImplementedError
 
-class AccountsRepositoryImpl(AccountsRepository):
+    async def get_by_workspace_id_and_name(
+        self,
+        workspace_id: models.WorkspaceId,
+        name: str,
+    ) -> models.Account:
+        raise NotImplementedError
+
+
+class AccountsRepositoryImpl(AccountsRepository):  # noqa: WPS214
     def __init__(self, db_conn: 'Database') -> None:
         self._conn = db_conn
         self._impl: DatabasesRepositoryImpl = DatabasesRepositoryImpl(db_conn, _AccountsMapper())
@@ -77,3 +87,22 @@ class AccountsRepositoryImpl(AccountsRepository):
             raise MappingError()
 
         return account
+
+    async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> List[models.Account]:
+        query = sa.select([db.Account.__table__]).where(
+            db.Account.workspace_id == workspace_id,
+        )
+        return await self._impl.find_many(query)
+
+    async def get_by_workspace_id_and_name(
+        self,
+        workspace_id: models.WorkspaceId,
+        name: str,
+    ) -> models.Account:
+        query = sa.select([db.Account.__table__]).where(
+            sa.and_(
+                db.Account.workspace_id == workspace_id,
+                db.Account.name == name,
+            ),
+        )
+        return await self._impl.find_one(query)

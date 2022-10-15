@@ -28,3 +28,10 @@ async def create_workspace(
         )
 
     return workspace
+
+
+async def get_user_workspace(
+    repos: repositories.Repositories,
+    user_id: models.UserId,
+) -> models.Workspace:
+    return await repos.workspaces_repo.get_by_owner_id(user_id)

@@ -7,7 +7,7 @@ from aiogram.types import ParseMode
 from pydantic import RedisDsn
 
 from .handlers import HANDLERS
-from .middlewares import CtxMiddleware, UserMiddleware
+from .middlewares import CtxMiddleware, UserMiddleware, WorkspaceMiddleware
 
 
 async def create_bot(
@@ -52,6 +52,7 @@ async def create_dispatcher(bot: Bot, redis_url: Optional[RedisDsn] = None) -> D
 def _setup_dispatcher_middlewares(dispatcher: Dispatcher) -> None:
     dispatcher.setup_middleware(CtxMiddleware())
     dispatcher.setup_middleware(UserMiddleware())
+    dispatcher.setup_middleware(WorkspaceMiddleware())
 
 
 def _setup_dispatcher_handlers(dispatcher: Dispatcher) -> None:

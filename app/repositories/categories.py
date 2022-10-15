@@ -1,6 +1,8 @@
 import abc
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
+
+import sqlalchemy as sa
 
 from app import db, models
 
@@ -29,6 +31,16 @@ class CategoriesRepository(  # noqa: B024 FIXME
 ):
     """Abstract Categories Repository"""
 
+    async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> List[models.Category]:
+        raise NotImplementedError
+
+    async def get_by_workspace_id_and_name(
+        self,
+        workspace_id: models.WorkspaceId,
+        name: str,
+    ) -> models.Category:
+        raise NotImplementedError
+
 
 class CategoriesRepositoryImpl(CategoriesRepository):
     def __init__(self, db_conn: 'Database') -> None:
@@ -49,3 +61,22 @@ class CategoriesRepositoryImpl(CategoriesRepository):
 
     async def delete(self, id_: models.CategoryId) -> None:
         return await self._impl.delete(id_)
+
+    async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> List[models.Category]:
+        query = sa.select([db.Category.__table__]).where(
+            db.Category.workspace_id == workspace_id,
+        )
+        return await self._impl.find_many(query)
+
+    async def get_by_workspace_id_and_name(
+        self,
+        workspace_id: models.WorkspaceId,
+        name: str,
+    ) -> models.Category:
+        query = sa.select([db.Category.__table__]).where(
+            sa.and_(
+                db.Category.workspace_id == workspace_id,
+                db.Category.name == name,
+            ),
+        )
+        return await self._impl.find_one(query)

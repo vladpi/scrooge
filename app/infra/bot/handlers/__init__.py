@@ -1,3 +1,3 @@
-from . import main
+from . import main, transactions
 
-HANDLERS = (main,)
+HANDLERS = (main, transactions)
