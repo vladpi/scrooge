@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from app import models
 
 
-class _CreatTransactionRequest(BaseModel):
+class _CreateTransactionRequest(BaseModel):
     user_id: models.UserId
 
     at_date: date
@@ -19,11 +19,11 @@ class _CreatTransactionRequest(BaseModel):
     amount: Decimal
 
 
-class CreateIncomeTransactionRequest(_CreatTransactionRequest):
+class CreateIncomeTransactionRequest(_CreateTransactionRequest):
     """Create Income Transaction Request"""
 
 
-class CreateOutcomeTransactionRequest(_CreatTransactionRequest):
+class CreateOutcomeTransactionRequest(_CreateTransactionRequest):
     """Create Outcome Transaction Request"""
 
 

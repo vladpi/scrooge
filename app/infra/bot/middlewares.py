@@ -7,6 +7,8 @@ from app import models
 from app.domains import (
     CreateOrUpdateTelegramUserRequest,
     create_or_update_user_from_telegram,
+    get_user_from_telegram,
+    get_user_workspace,
 )
 
 if TYPE_CHECKING:
@@ -14,6 +16,7 @@ if TYPE_CHECKING:
 
 CTX_ATTR = 'ctx'
 USER_ATTR = 'user'
+WORKSPACE_ATTR = 'workspace'
 
 
 class CtxMiddleware(BaseMiddleware):
@@ -63,3 +66,34 @@ class UserMiddleware(BaseMiddleware):
                 last_name=from_user.last_name,
             ),
         )
+
+
+class WorkspaceMiddleware(BaseMiddleware):
+    async def on_process_message(
+        self,
+        message: types.Message,
+        data: dict,  # noqa: WPS110
+    ) -> None:
+        data[WORKSPACE_ATTR] = await self._get_workspace(
+            message.bot.data[CTX_ATTR],
+            message.from_user,
+        )
+
+    async def on_process_callback_query(
+        self,
+        callback_query: types.Message,
+        data: dict,  # noqa: WPS110
+    ) -> None:
+        data[WORKSPACE_ATTR] = await self._get_workspace(
+            callback_query.bot.data[CTX_ATTR],
+            callback_query.from_user,
+        )
+
+    async def _get_workspace(
+        self,
+        ctx: 'Context',
+        from_user: types.User,
+    ) -> models.Workspace:
+        telegram_user = await get_user_from_telegram(ctx.repos, from_user.id)
+
+        return await get_user_workspace(ctx.repos, telegram_user.user_id)

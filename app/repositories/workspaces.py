@@ -2,6 +2,8 @@ import abc
 import logging
 from typing import TYPE_CHECKING
 
+import sqlalchemy as sa
+
 from app import db, models
 
 from .base import RepositoryBase
@@ -29,6 +31,9 @@ class WorkspacesRepository(  # noqa: B024 FIXME
 ):
     """Abstract Workspaces Repository"""
 
+    async def get_by_owner_id(self, owner_id: models.UserId) -> models.Workspace:
+        raise NotImplementedError
+
 
 class WorkspacesRepositoryImpl(WorkspacesRepository):
     def __init__(self, db_conn: 'Database') -> None:
@@ -49,3 +54,9 @@ class WorkspacesRepositoryImpl(WorkspacesRepository):
 
     async def delete(self, id_: models.WorkspaceId) -> None:
         return await self._impl.delete(id_)
+
+    async def get_by_owner_id(self, owner_id: models.UserId) -> models.Workspace:
+        query = sa.select([db.Workspace.__table__]).where(
+            db.Workspace.owner_id == owner_id,
+        )
+        return await self._impl.find_one(query)
