@@ -3,7 +3,7 @@ from typing import List
 from app import models, repositories
 
 from .consts import DEFAULT_CATEGORIES
-from .schemas import CreateUserDefaultCategoriesRequest
+from .schemas import CreateUserDefaultCategoriesRequest, CreateWorkspaceCategory
 
 
 async def create_user_default_categories(
@@ -24,6 +24,20 @@ async def create_user_default_categories(
         categories.append(category)
 
     return categories
+
+
+async def create_workspace_category(
+    repos: repositories.Repositories,
+    request: CreateWorkspaceCategory,
+) -> models.Category:
+    return await repos.categories_repo.create(
+        models.CategoryCreate(
+            workspace_id=request.workspace_id,
+            name=request.name,
+            is_income=request.is_income,
+            is_outcome=request.is_outcome,
+        ),
+    )
 
 
 async def get_workspace_categories(

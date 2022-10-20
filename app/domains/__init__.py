@@ -4,12 +4,16 @@ from .accounts import (
     CreateUserDefaultAccounts,
     get_workspace_accounts,
     get_workspace_account_by_name,
+    create_workspace_account,
+    CreateWorkspaceAccount,
 )
 from .categories import (
     CreateUserDefaultCategoriesRequest,
     create_user_default_categories,
     get_workspace_category_by_name,
     get_workspace_categories,
+    create_workspace_category,
+    CreateWorkspaceCategory,
 )
 from .workspaces import CreateWorkspaceRequest, create_workspace, get_user_workspace
 from .users import (
@@ -22,4 +26,7 @@ from .transactions import (
     CreateOutcomeTransactionRequest,
     create_income_transaction,
     CreateIncomeTransactionRequest,
+    create_transfer_transaction,
+    CreateTransferTransactionRequest,
+    create_transaction,
 )

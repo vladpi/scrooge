@@ -9,6 +9,7 @@ ignore =
     WPS300,
     WPS305,
     WPS323,
+    WPS332, # Found walrus operator
     WPS348,
     WPS404,
     B008,

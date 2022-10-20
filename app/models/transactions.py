@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Optional
 
@@ -47,6 +47,9 @@ class TransactionCreate(BaseCreateRequest):
     income_account_id: Optional[AccountId] = None
     income_currency: Optional[Currency] = None
     income: Optional[Decimal] = None
+
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class IncomeTransactionCreate(TransactionCreate):
