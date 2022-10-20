@@ -11,7 +11,7 @@ async def create_income_transaction(
     repos: repositories.Repositories,
     request: CreateIncomeTransactionRequest,
 ) -> models.Transaction:
-    return await _create_transaction(
+    return await create_transaction(
         repos,
         models.IncomeTransactionCreate(
             user_id=request.user_id,
@@ -29,7 +29,7 @@ async def create_outcome_transaction(
     repos: repositories.Repositories,
     request: CreateOutcomeTransactionRequest,
 ) -> models.Transaction:
-    return await _create_transaction(
+    return await create_transaction(
         repos,
         models.OutcomeTransactionCreate(
             user_id=request.user_id,
@@ -47,7 +47,7 @@ async def create_transfer_transaction(
     repos: repositories.Repositories,
     request: CreateTransferTransactionRequest,
 ) -> models.Transaction:
-    return await _create_transaction(
+    return await create_transaction(
         repos,
         models.TransferTransactionCreate(
             user_id=request.user_id,
@@ -64,7 +64,7 @@ async def create_transfer_transaction(
     )
 
 
-async def _create_transaction(
+async def create_transaction(
     repos: repositories.Repositories,
     request: models.TransactionCreate,
 ) -> models.Transaction:

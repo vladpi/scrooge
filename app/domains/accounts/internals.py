@@ -3,7 +3,7 @@ from typing import List
 from app import models, repositories
 
 from .consts import DEFAULT_ACCOUNTS
-from .schemas import CreateUserDefaultAccounts
+from .schemas import CreateUserDefaultAccounts, CreateWorkspaceAccount
 
 
 async def create_user_defaults_accounts(
@@ -23,6 +23,19 @@ async def create_user_defaults_accounts(
         accounts.append(account)
 
     return accounts
+
+
+async def create_workspace_account(
+    repos: repositories.Repositories,
+    request: CreateWorkspaceAccount,
+) -> models.Account:
+    return await repos.accounts_repo.create(
+        models.AccountCreate(
+            workspace_id=request.workspace_id,
+            name=request.name,
+            currency=request.currency,
+        ),
+    )
 
 
 async def get_workspace_accounts(
