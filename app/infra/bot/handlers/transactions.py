@@ -6,16 +6,7 @@ from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext, filters
 
 from app import utils
-from app.domains import (
-    CreateIncomeTransactionRequest,
-    CreateOutcomeTransactionRequest,
-    create_income_transaction,
-    create_outcome_transaction,
-    get_workspace_account_by_name,
-    get_workspace_accounts,
-    get_workspace_categories,
-    get_workspace_category_by_name,
-)
+from app.domains import CreateIncomeTransactionRequest, CreateOutcomeTransactionRequest
 from app.repositories.exceptions import NotFoundError
 
 from ..states import AddTransactionStates
@@ -74,7 +65,7 @@ async def txn_entry_handler(  # noqa: WPS211
             'user_id': str(user.user_id),
         }
 
-    accounts = await get_workspace_accounts(ctx.repos, workspace.id)
+    accounts = await ctx.services.accounts.get_workspace_accounts(workspace.id)
     keyboard = [[types.KeyboardButton(account.name)] for account in accounts]
     reply_markup = types.ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await message.answer(
@@ -92,7 +83,10 @@ async def txn_account_handler(
     workspace: 'Workspace',
 ) -> None:
     try:
-        account = await get_workspace_account_by_name(ctx.repos, workspace.id, message.text)
+        account = await ctx.services.accounts.get_workspace_account_by_name(
+            workspace.id,
+            message.text,
+        )
 
     except NotFoundError:
         return  # FIXME message
@@ -161,7 +155,7 @@ async def txn_at_date_handler(
     async with state.proxy() as proxy:
         proxy[TRANSACTION_PROXY_ATTR]['at_date'] = parsed_date.strftime('%Y-%m-%d')
 
-    categories = await get_workspace_categories(ctx.repos, workspace.id)
+    categories = await ctx.services.categories.get_workspace_categories(workspace.id)
     keyboard = [[types.KeyboardButton(category.name)] for category in categories]
     reply_markup = types.ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await message.answer(
@@ -179,7 +173,10 @@ async def txn_category_handler(
     workspace: 'Workspace',
 ) -> None:
     try:
-        category = await get_workspace_category_by_name(ctx.repos, workspace.id, message.text)
+        category = await ctx.services.categories.get_workspace_category_by_name(
+            workspace.id,
+            message.text,
+        )
     except NotFoundError:
         return  # FIXME message
 
@@ -190,14 +187,12 @@ async def txn_category_handler(
         transaction_type = transaction_data.pop('type')
 
         if transaction_type == 'income':
-            await create_income_transaction(
-                ctx.repos,
+            await ctx.services.transactions.create_income_transaction(
                 CreateIncomeTransactionRequest(**transaction_data),
             )
 
         elif transaction_type == 'outcome':
-            await create_outcome_transaction(
-                ctx.repos,
+            await ctx.services.transactions.create_outcome_transaction(
                 CreateOutcomeTransactionRequest(**transaction_data),
             )
 

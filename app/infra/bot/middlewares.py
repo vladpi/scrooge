@@ -4,12 +4,7 @@ from aiogram import types
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
 from app import models
-from app.domains import (
-    CreateOrUpdateTelegramUserRequest,
-    create_or_update_user_from_telegram,
-    get_user_from_telegram,
-    get_user_workspace,
-)
+from app.domains import CreateOrUpdateTelegramUserRequest
 
 if TYPE_CHECKING:
     from .context import Context
@@ -57,8 +52,7 @@ class UserMiddleware(BaseMiddleware):
         )
 
     async def _fetch_user(self, ctx: 'Context', from_user: types.User) -> models.TelegramUser:
-        return await create_or_update_user_from_telegram(
-            ctx.repos,
+        return await ctx.services.users.create_or_update_user_from_telegram(
             CreateOrUpdateTelegramUserRequest(
                 telegram_user_id=from_user.id,
                 username=from_user.username,
@@ -94,6 +88,6 @@ class WorkspaceMiddleware(BaseMiddleware):
         ctx: 'Context',
         from_user: types.User,
     ) -> models.Workspace:
-        telegram_user = await get_user_from_telegram(ctx.repos, from_user.id)
+        telegram_user = await ctx.services.users.get_user_from_telegram(from_user.id)
 
-        return await get_user_workspace(ctx.repos, telegram_user.user_id)
+        return await ctx.services.workspaces.get_user_workspace(telegram_user.user_id)

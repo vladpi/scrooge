@@ -9,13 +9,11 @@ from pydantic import BaseModel
 from app import models, repositories, settings
 from app.adapters import zenmoney
 from app.domains import (
+    AccountsService,
+    CategoriesService,
     CreateWorkspaceAccount,
     CreateWorkspaceCategory,
-    create_transaction,
-    create_workspace_account,
-    create_workspace_category,
-    get_workspace_account_by_name,
-    get_workspace_category_by_name,
+    TransactionsService,
 )
 from libs.context import ContextBase
 
@@ -33,7 +31,9 @@ class Context(ContextBase):
 
     db: databases.Database
 
-    repos: repositories.Repositories
+    categories_srv: CategoriesService
+    accounts_srv: AccountsService
+    transactions_srv: TransactionsService
 
     async def _do_close(self) -> None:
         await self.db.disconnect()
@@ -55,24 +55,20 @@ async def _make_context() -> Context:  # noqa: WPS210
     db = databases.Database(app_settings.DATABASE_URL)
     await db.connect()
 
-    users_repo = repositories.UsersRepositoryImpl(db)
-    telegram_users_repo = repositories.TelegramUsersRepositoryImpl(db)
-    workspaces_repo = repositories.WorkspacesRepositoryImpl(db)
     categories_repo = repositories.CategoriesRepositoryImpl(db)
     accounts_repo = repositories.AccountsRepositoryImpl(db)
     transactions_repo = repositories.TransactionsRepositoryImpl(db)
 
+    categories_srv = CategoriesService(categories_repo)
+    accounts_srv = AccountsService(accounts_repo)
+    transactions_srv = TransactionsService(transactions_repo, accounts_repo)
+
     return Context(
         app_settings=app_settings,
         db=db,
-        repos=repositories.Repositories(
-            users_repo=users_repo,
-            telegram_users_repo=telegram_users_repo,
-            workspaces_repo=workspaces_repo,
-            categories_repo=categories_repo,
-            accounts_repo=accounts_repo,
-            transactions_repo=transactions_repo,
-        ),
+        categories_srv=categories_srv,
+        accounts_srv=accounts_srv,
+        transactions_srv=transactions_srv,
     )
 
 
@@ -105,8 +101,7 @@ async def _create_transaction_from_zm(
         zm_transaction.income_account,
     )
 
-    return await create_transaction(
-        ctx.repos,
+    return await ctx.transactions_srv.create_transaction(
         models.TransactionCreate(
             user_id=user_id,
             at_date=zm_transaction.at_date,
@@ -130,10 +125,12 @@ async def _get_or_create_workspace_category(
     zm_category: zenmoney.Category,
 ) -> models.Category:
     try:
-        return await get_workspace_category_by_name(ctx.repos, workspace_id, zm_category.name)
+        return await ctx.categories_srv.get_workspace_category_by_name(
+            workspace_id,
+            zm_category.name,
+        )
     except repositories.NotFoundError:
-        return await create_workspace_category(
-            ctx.repos,
+        return await ctx.categories_srv.create_workspace_category(
             CreateWorkspaceCategory(
                 workspace_id=workspace_id,
                 name=zm_category.name,
@@ -150,10 +147,9 @@ async def _get_or_create_workspace_account(
         return None
 
     try:
-        return await get_workspace_account_by_name(ctx.repos, workspace_id, zm_account.name)
+        return await ctx.accounts_srv.get_workspace_account_by_name(workspace_id, zm_account.name)
     except repositories.NotFoundError:
-        return await create_workspace_account(
-            ctx.repos,
+        return await ctx.accounts_srv.create_workspace_account(
             CreateWorkspaceAccount(
                 workspace_id=workspace_id,
                 name=zm_account.name,
