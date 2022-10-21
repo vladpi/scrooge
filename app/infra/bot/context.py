@@ -2,13 +2,26 @@ import logging
 
 import aiogram
 import databases
+import pydantic
 
-from app import repositories, settings
+from app import domains, repositories, settings
 from libs.context import ContextBase
 
 from .bot import create_bot, create_dispatcher
 
 logger = logging.getLogger(__name__)
+
+
+class Services(pydantic.BaseModel):
+    users: domains.UsersService
+    accounts: domains.AccountsService
+    categories: domains.CategoriesService
+    transactions: domains.TransactionsService
+    workspaces: domains.WorkspacesService
+
+    class Config:  # noqa: WPS306, WPS431
+        arbitrary_types_allowed = True
+        allow_mutation = False
 
 
 class Context(ContextBase):
@@ -21,6 +34,7 @@ class Context(ContextBase):
     db: databases.Database
 
     repos: repositories.Repositories
+    services: Services
 
     async def _do_close(self) -> None:
         bot_sesion = await self.bot.get_session()
@@ -55,12 +69,8 @@ async def _make_context() -> Context:  # noqa: WPS210
     )
     dispatcher = await create_dispatcher(bot, bot_settings.REDIS_URL)
 
-    users_repo = repositories.UsersRepositoryImpl(db)
-    telegram_users_repo = repositories.TelegramUsersRepositoryImpl(db)
-    workspaces_repo = repositories.WorkspacesRepositoryImpl(db)
-    categories_repo = repositories.CategoriesRepositoryImpl(db)
-    accounts_repo = repositories.AccountsRepositoryImpl(db)
-    transactions_repo = repositories.TransactionsRepositoryImpl(db)
+    repos = _make_repos(db)
+    services = _make_services(repos)
 
     context = Context(
         app_settings=app_settings,
@@ -68,14 +78,8 @@ async def _make_context() -> Context:  # noqa: WPS210
         bot=bot,
         dispatcher=dispatcher,
         db=db,
-        repos=repositories.Repositories(
-            users_repo=users_repo,
-            telegram_users_repo=telegram_users_repo,
-            workspaces_repo=workspaces_repo,
-            categories_repo=categories_repo,
-            accounts_repo=accounts_repo,
-            transactions_repo=transactions_repo,
-        ),
+        repos=repos,
+        services=services,
     )
 
     # bad hack :(
@@ -84,3 +88,30 @@ async def _make_context() -> Context:  # noqa: WPS210
     logger.info('Bot context successfully initialized')
 
     return context
+
+
+def _make_repos(db: databases.Database) -> repositories.Repositories:
+    return repositories.Repositories(
+        users_repo=repositories.UsersRepositoryImpl(db),
+        telegram_users_repo=repositories.TelegramUsersRepositoryImpl(db),
+        workspaces_repo=repositories.WorkspacesRepositoryImpl(db),
+        categories_repo=repositories.CategoriesRepositoryImpl(db),
+        accounts_repo=repositories.AccountsRepositoryImpl(db),
+        transactions_repo=repositories.TransactionsRepositoryImpl(db),
+    )
+
+
+def _make_services(repos: repositories.Repositories) -> Services:
+    users_srv = domains.UsersService(repos.users_repo, repos.telegram_users_repo)
+    accounts_srv = domains.AccountsService(repos.accounts_repo)
+    categories_srv = domains.CategoriesService(repos.categories_repo)
+    transactions_srv = domains.TransactionsService(repos.transactions_repo, repos.accounts_repo)
+    workspaces_srv = domains.WorkspacesService(repos.workspaces_repo, accounts_srv, categories_srv)
+
+    return Services(
+        users=users_srv,
+        accounts=accounts_srv,
+        categories=categories_srv,
+        transactions=transactions_srv,
+        workspaces=workspaces_srv,
+    )
