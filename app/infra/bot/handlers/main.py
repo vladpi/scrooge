@@ -1,25 +1,24 @@
 from typing import TYPE_CHECKING
 
-from aiogram import Dispatcher, types
-from aiogram.dispatcher import FSMContext, filters
+import punq
+from aiogram import Dispatcher, filters, types
+from aiogram.fsm.context import FSMContext
 
 if TYPE_CHECKING:
-    from app.infra.bot.context import Context
     from app.models import TelegramUser
 
 
 def setup_handlers(dispatcher: Dispatcher) -> None:
-    dispatcher.register_message_handler(
+    dispatcher.message.register(
         start,
         filters.CommandStart(),
-        state='*',
     )
 
 
 async def start(
     message: types.Message,
     state: FSMContext,
-    ctx: 'Context',
+    container: punq.Container,
     user: 'TelegramUser',
 ) -> None:
     await message.answer(f'Hello, {user.first_name}!')

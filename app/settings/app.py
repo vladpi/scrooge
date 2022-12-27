@@ -17,6 +17,8 @@ class BotSettings(BaseSettings):
 
 
 class AppSettings(BaseSettings):
+    SECRET_KEY: SecretStr
+
     DATABASE_URL: base.SQLAlchemyPostgresDsn
 
     LOG_LEVEL: str = Field(default='INFO')

@@ -1,59 +1,59 @@
-from typing import TYPE_CHECKING
+from typing import Any, Awaitable, Callable, Dict
 
-from aiogram import types
-from aiogram.dispatcher.middlewares import BaseMiddleware
+import punq
+from aiogram.types import TelegramObject, Update, User
 
-from app import models
-from app.domains import CreateOrUpdateTelegramUserRequest
+from app import domains, models
 
-if TYPE_CHECKING:
-    from .context import Context
-
-CTX_ATTR = 'ctx'
+CONTAINER_ATTR = 'container'
 USER_ATTR = 'user'
 WORKSPACE_ATTR = 'workspace'
 
+_AiogramHandler = Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]]  # noqa: WPS221
+
+
+class BaseMiddleware:
+    def __init__(self, container: punq.Container) -> None:
+        super().__init__()
+        self._container = container
+
 
 class CtxMiddleware(BaseMiddleware):
-    async def on_process_message(
+    async def __call__(
         self,
-        message: types.Message,
-        data: dict,  # noqa: WPS110
-    ) -> None:
-        data[CTX_ATTR] = message.bot.data[CTX_ATTR]
+        update_handler: _AiogramHandler,
+        update: Update,
+        update_data: Dict[str, Any],
+    ) -> Any:
+        update_data[CONTAINER_ATTR] = self._container
 
-    async def on_process_callback_query(
-        self,
-        callback_query: types.CallbackQuery,
-        data: dict,  # noqa: WPS110
-    ) -> None:
-        data[CTX_ATTR] = callback_query.bot.data[CTX_ATTR]
+        await update_handler(update, update_data)
 
 
 class UserMiddleware(BaseMiddleware):
-    async def on_process_message(
+    async def __call__(
         self,
-        message: types.Message,
-        data: dict,  # noqa: WPS110
-    ) -> None:
-        data[USER_ATTR] = await self._fetch_user(
-            message.bot.data[CTX_ATTR],
-            message.from_user,
-        )
+        update_handler: _AiogramHandler,
+        update: Update,
+        update_data: Dict[str, Any],
+    ) -> Any:
+        if update.message is not None:
+            from_user = update.message.from_user
+        elif update.callback_query is not None:
+            from_user = update.callback_query.from_user
+        else:
+            raise RuntimeError(f'Unsupported event {update.event_type} for UserMiddleware')
 
-    async def on_process_callback_query(
-        self,
-        callback_query: types.Message,
-        data: dict,  # noqa: WPS110
-    ) -> None:
-        data[USER_ATTR] = await self._fetch_user(
-            callback_query.bot.data[CTX_ATTR],
-            callback_query.from_user,
-        )
+        if from_user is not None:
+            update_data[USER_ATTR] = await self._fetch_user(from_user)
 
-    async def _fetch_user(self, ctx: 'Context', from_user: types.User) -> models.TelegramUser:
-        return await ctx.services.users.create_or_update_user_from_telegram(
-            CreateOrUpdateTelegramUserRequest(
+        await update_handler(update, update_data)
+
+    async def _fetch_user(self, from_user: User) -> models.TelegramUser:
+        users_service = self._container.resolve(domains.UsersService)
+
+        return await users_service.create_or_update_user_from_telegram(
+            domains.CreateOrUpdateTelegramUserRequest(
                 telegram_user_id=from_user.id,
                 username=from_user.username,
                 first_name=from_user.first_name,
@@ -63,31 +63,31 @@ class UserMiddleware(BaseMiddleware):
 
 
 class WorkspaceMiddleware(BaseMiddleware):
-    async def on_process_message(
+    async def __call__(
         self,
-        message: types.Message,
-        data: dict,  # noqa: WPS110
-    ) -> None:
-        data[WORKSPACE_ATTR] = await self._get_workspace(
-            message.bot.data[CTX_ATTR],
-            message.from_user,
-        )
+        update_handler: _AiogramHandler,
+        update: Update,
+        update_data: Dict[str, Any],
+    ) -> Any:
+        if update.message is not None:
+            from_user = update.message.from_user
+        elif update.callback_query is not None:
+            from_user = update.callback_query.from_user
+        else:
+            raise RuntimeError(f'Unsupported event {update.event_type} for UserMiddleware')
 
-    async def on_process_callback_query(
-        self,
-        callback_query: types.Message,
-        data: dict,  # noqa: WPS110
-    ) -> None:
-        data[WORKSPACE_ATTR] = await self._get_workspace(
-            callback_query.bot.data[CTX_ATTR],
-            callback_query.from_user,
-        )
+        if from_user is not None:
+            update_data[WORKSPACE_ATTR] = await self._get_workspace(from_user)
+
+        await update_handler(update, update_data)
 
     async def _get_workspace(
         self,
-        ctx: 'Context',
-        from_user: types.User,
+        from_user: User,
     ) -> models.Workspace:
-        telegram_user = await ctx.services.users.get_user_from_telegram(from_user.id)
+        users_service = self._container.resolve(domains.UsersService)
+        workspaces_service = self._container.resolve(domains.WorkspacesService)
 
-        return await ctx.services.workspaces.get_user_workspace(telegram_user.user_id)
+        telegram_user = await users_service.get_user_from_telegram(from_user.id)
+
+        return await workspaces_service.get_user_workspace(telegram_user.user_id)

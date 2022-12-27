@@ -5,7 +5,10 @@ from typing import Optional, Tuple
 import dateparser
 
 
-def parse_amount_and_comment(text: str) -> Tuple[Optional[str], Optional[str]]:
+def parse_amount_and_comment(text: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+    if text is None:
+        return None, None
+
     amount = parse_amount(text)
     comment = text.replace(amount, '').strip() if amount is not None else None
 
@@ -22,6 +25,8 @@ def parse_amount(text: str) -> Optional[str]:
     return None
 
 
-def parse_date(text: str) -> Optional[date]:
+def parse_date(text: Optional[str]) -> Optional[date]:
+    if text is None:
+        return None
     parsed_datetime = dateparser.parse(text, languages=['ru'])
     return parsed_datetime.date() if parsed_datetime is not None else None

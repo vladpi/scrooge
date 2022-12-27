@@ -1,10 +1,9 @@
 import fastapi
+import punq
 from fastapi_security_telegram_webhook import OnlyTelegramNetwork
-
-from . import context
 
 telegram_webhook_security = OnlyTelegramNetwork()
 
 
-async def get_context(request: fastapi.Request) -> context.Context:
-    return request.app.state.context
+async def get_container(request: fastapi.Request) -> punq.Container:
+    return request.app.state.container

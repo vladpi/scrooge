@@ -1,9 +1,8 @@
 import logging
 from typing import Callable
 
+import databases
 import fastapi
-
-from .context import make_context
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +16,11 @@ def register_events(app: fastapi.FastAPI) -> None:
 def _on_startup(app: fastapi.FastAPI) -> Callable:
     async def startup_handler() -> None:  # noqa: WPS430
         logger.info(f'Starting app {app.title}')
-        app.state.context = await make_context()
+
+        db = app.state.container.resolve(databases.Database)
+        await db.connect()
+
+        await app.state.bot.setup()
 
     return startup_handler
 
@@ -27,7 +30,10 @@ def _on_shutdown(app: fastapi.FastAPI) -> Callable:
         logger.info(f'Shutting down app {app.title}')
 
         try:
-            await app.state.context.close()
+            await app.state.bot.shutdown()
+
+            db = app.state.container.resolve(databases.Database)
+            await db.disconnect()
 
         except Exception:
             logger.exception(f'Context of {app.title} is not properly configured, failed to close')
