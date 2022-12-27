@@ -4,7 +4,7 @@ from .consts import DEFAULT_ACCOUNTS
 from .schemas import CreateUserDefaultAccounts, CreateWorkspaceAccount
 
 
-class AccountsService:  # noqa: WPS306
+class AccountsService:
     def __init__(self, accounts_repo: repositories.AccountsRepository) -> None:
         self._repo = accounts_repo
 

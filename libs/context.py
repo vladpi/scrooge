@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class ContextBase(pydantic.BaseModel, abc.ABC):
-    class Config:  # noqa: WPS306, WPS431
+    class Config:  # noqa: WPS431
         arbitrary_types_allowed = True
         allow_mutation = False
 

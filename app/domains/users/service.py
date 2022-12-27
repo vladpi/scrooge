@@ -7,7 +7,7 @@ from .schemas import CreateOrUpdateTelegramUserRequest
 logger = logging.getLogger(__name__)
 
 
-class UsersService:  # noqa: WPS306
+class UsersService:
     def __init__(
         self,
         users_repo: repositories.UsersRepository,

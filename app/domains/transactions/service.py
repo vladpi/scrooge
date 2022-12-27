@@ -7,7 +7,7 @@ from .schemas import (
 )
 
 
-class TransactionsService:  # noqa: WPS306
+class TransactionsService:
     def __init__(
         self,
         transactions_repo: repositories.TranasactionssRepository,

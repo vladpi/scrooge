@@ -4,7 +4,7 @@ from .consts import DEFAULT_CATEGORIES
 from .schemas import CreateUserDefaultCategoriesRequest, CreateWorkspaceCategory
 
 
-class CategoriesService:  # noqa: WPS306
+class CategoriesService:
     def __init__(self, categories_repo: repositories.CategoriesRepository) -> None:
         self._repo = categories_repo
 

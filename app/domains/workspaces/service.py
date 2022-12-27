@@ -9,7 +9,7 @@ from app.domains import (
 from .schemas import CreateWorkspaceRequest
 
 
-class WorkspacesService:  # noqa: WPS306
+class WorkspacesService:
     def __init__(
         self,
         workspaces_repo: repositories.WorkspacesRepository,
