@@ -1,7 +1,7 @@
 import logging
 
 import fastapi
-import punq
+from neoteroi import di
 
 from app.settings import BotSettings
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 APP_TITLE = 'scrooge-bot'
 
 
-def create_app(container: punq.Container) -> fastapi.FastAPI:
+def create_app(container: di.Container) -> fastapi.FastAPI:
     logger.info(f'Creating {APP_TITLE} app')
     app = fastapi.FastAPI(title=APP_TITLE)
 

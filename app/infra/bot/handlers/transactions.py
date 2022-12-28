@@ -2,9 +2,9 @@ from datetime import date, datetime, timedelta
 from functools import partial
 from typing import TYPE_CHECKING, Optional
 
-import punq
 from aiogram import Dispatcher, filters, types
 from aiogram.fsm.context import FSMContext
+from neoteroi import di
 
 from app import domains, utils
 from app.repositories.exceptions import NotFoundError
@@ -51,7 +51,7 @@ def setup_handlers(dispatcher: Dispatcher) -> None:
 async def txn_entry_handler(  # noqa: WPS211
     message: types.Message,
     state: FSMContext,
-    container: punq.Container,
+    container: di.Container,
     user: 'TelegramUser',
     workspace: 'Workspace',
     transaction_type: str,
@@ -76,7 +76,7 @@ async def txn_entry_handler(  # noqa: WPS211
 async def txn_account_handler(
     message: types.Message,
     state: FSMContext,
-    container: punq.Container,
+    container: di.Container,
     user: 'TelegramUser',
     workspace: 'Workspace',
 ) -> None:
@@ -106,7 +106,7 @@ async def txn_account_handler(
 async def txn_amount_and_comment_handler(
     message: types.Message,
     state: FSMContext,
-    container: punq.Container,
+    container: di.Container,
     user: 'TelegramUser',
 ) -> None:
     amount, comment = utils.parse_amount_and_comment(message.text)
@@ -132,7 +132,7 @@ async def txn_amount_and_comment_handler(
 async def txn_at_date_handler(
     message: types.Message,
     state: FSMContext,
-    container: punq.Container,
+    container: di.Container,
     user: 'TelegramUser',
     workspace: 'Workspace',
 ) -> None:
@@ -173,7 +173,7 @@ def _parse_date(raw_date: Optional[str]) -> Optional[date]:
 async def txn_category_handler(
     message: types.Message,
     state: FSMContext,
-    container: punq.Container,
+    container: di.Container,
     user: 'TelegramUser',
     workspace: 'Workspace',
 ) -> None:
@@ -198,7 +198,7 @@ async def txn_category_handler(
     await state.clear()
 
 
-async def _create_transaction_from_state(container: punq.Container, state: FSMContext) -> None:
+async def _create_transaction_from_state(container: di.Container, state: FSMContext) -> None:
     transactions_service = container.resolve(domains.TransactionsService)
 
     transaction_data = await state.get_data()

@@ -1,8 +1,9 @@
 import abc
 import logging
 from decimal import Decimal
-from typing import TYPE_CHECKING, List
+from typing import List
 
+import databases
 import sqlalchemy as sa
 
 from app import db, models
@@ -10,9 +11,6 @@ from app import db, models
 from .base import RepositoryBase
 from .exceptions import MappingError, UpdateError
 from .sql import DatabasesRepositoryImpl, RelationalMapper
-
-if TYPE_CHECKING:
-    from databases import Database
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +46,7 @@ class AccountsRepository(  # noqa: B024 FIXME
 
 
 class AccountsRepositoryImpl(AccountsRepository):  # noqa: WPS214
-    def __init__(self, db_conn: 'Database') -> None:
+    def __init__(self, db_conn: databases.Database) -> None:
         self._conn = db_conn
         self._impl: DatabasesRepositoryImpl = DatabasesRepositoryImpl(db_conn, _AccountsMapper())
 

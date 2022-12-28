@@ -1,16 +1,14 @@
 import abc
 import logging
-from typing import TYPE_CHECKING, List
+from typing import List
 
+import databases
 import sqlalchemy as sa
 
 from app import db, models
 
 from .base import RepositoryBase
 from .sql import DatabasesRepositoryImpl, RelationalMapper
-
-if TYPE_CHECKING:
-    from databases import Database
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +41,7 @@ class CategoriesRepository(  # noqa: B024 FIXME
 
 
 class CategoriesRepositoryImpl(CategoriesRepository):
-    def __init__(self, db_conn: 'Database') -> None:
+    def __init__(self, db_conn: databases.Database) -> None:
         self._impl: DatabasesRepositoryImpl = DatabasesRepositoryImpl(db_conn, _CategoriesMapper())
 
     async def create(self, create_model: models.CategoryCreate) -> models.Category:

@@ -2,6 +2,7 @@ import logging
 from typing import TYPE_CHECKING, Any, List, Mapping, Optional, TypeVar, cast
 
 import asyncpg
+import databases
 import sqlalchemy as sa
 
 from app.models.base import (
@@ -21,7 +22,6 @@ _ModelId = TypeVar('_ModelId', bound=BaseIdentity)
 
 
 if TYPE_CHECKING:
-    from databases import Database
     from databases.interfaces import Record
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 class DatabasesRepositoryImpl(  # noqa: WPS214
     RepositoryBase[_Model, _ModelId, _ModelCreate, _ModelUpdate],
 ):
-    def __init__(self, db: 'Database', mapper: MapperBase) -> None:
+    def __init__(self, db: databases.Database, mapper: MapperBase) -> None:
         self._db = db
 
         self._mapper = mapper

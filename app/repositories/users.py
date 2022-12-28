@@ -1,14 +1,12 @@
 import abc
 import logging
-from typing import TYPE_CHECKING
+
+import databases
 
 from app import db, models
 
 from .base import RepositoryBase
 from .sql import DatabasesRepositoryImpl, RelationalMapper
-
-if TYPE_CHECKING:
-    from databases import Database
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +29,7 @@ class UsersRepository(  # noqa: B024 FIXME
 
 
 class UsersRepositoryImpl(UsersRepository):
-    def __init__(self, db_conn: 'Database') -> None:
+    def __init__(self, db_conn: databases.Database) -> None:
         self._impl: DatabasesRepositoryImpl = DatabasesRepositoryImpl(db_conn, _UsersMapper())
 
     async def create(self, create_model: models.UserCreate) -> models.User:
@@ -69,7 +67,7 @@ class TelegramUsersRepository(  # noqa: B024 FIXME
 
 
 class TelegramUsersRepositoryImpl(TelegramUsersRepository):
-    def __init__(self, db_conn: 'Database') -> None:
+    def __init__(self, db_conn: databases.Database) -> None:
         self._impl: DatabasesRepositoryImpl = DatabasesRepositoryImpl(
             db_conn,
             _TelegramUsersMapper(),

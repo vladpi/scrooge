@@ -21,9 +21,9 @@ dateparser = "^1.1.1"
 fastapi-login = "^1.8.3"
 Jinja2 = "^3.1.2"
 Starlette-WTF = "^0.4.3"
-punq = "^0.6.2"
 aiogram = "3.0.0b6"
 redis = "^4.4.0"
+neoteroi-di = { git = "https://github.com/Neoteroi/rodi.git", branch = "main" }
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.971"
