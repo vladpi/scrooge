@@ -1,6 +1,5 @@
 from datetime import date
 from decimal import Decimal
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -12,7 +11,7 @@ class _CreateTransactionRequest(BaseModel):
 
     at_date: date
     category_id: models.CategoryId
-    comment: Optional[str] = None
+    comment: str | None = None
 
     account_id: models.AccountId
     currency: models.Currency
@@ -32,7 +31,7 @@ class CreateTransferTransactionRequest(BaseModel):
 
     at_date: date
     category_id: models.CategoryId
-    comment: Optional[str] = None
+    comment: str | None = None
 
     outcome_account_id: models.AccountId
     outcome_currency: models.Currency

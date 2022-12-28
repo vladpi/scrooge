@@ -1,5 +1,3 @@
-from typing import Optional
-
 from .base import (
     BaseCreateRequest,
     BaseModel,
@@ -33,21 +31,21 @@ class TelegramUser(BaseModel):
     id: TelegramUserId
     user_id: UserId
 
-    username: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    username: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
 
 
 class TelegramUserCreate(BaseCreateRequest):
     id: TelegramUserId
     user_id: UserId
 
-    username: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    username: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
 
 
 class TelegramUserUpdate(BaseUpdateRequest):
-    username: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    username: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None

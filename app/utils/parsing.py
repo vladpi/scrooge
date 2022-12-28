@@ -1,11 +1,10 @@
 import re
 from datetime import date
-from typing import Optional, Tuple
 
 import dateparser
 
 
-def parse_amount_and_comment(text: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+def parse_amount_and_comment(text: str | None) -> tuple[str | None, str | None]:
     if text is None:
         return None, None
 
@@ -15,7 +14,7 @@ def parse_amount_and_comment(text: Optional[str]) -> Tuple[Optional[str], Option
     return amount, comment
 
 
-def parse_amount(text: str) -> Optional[str]:
+def parse_amount(text: str) -> str | None:
     pattern = r'(\d+[\.\,]?\d*)'
     regexp_result = re.search(pattern, text)
 
@@ -25,7 +24,7 @@ def parse_amount(text: str) -> Optional[str]:
     return None
 
 
-def parse_date(text: Optional[str]) -> Optional[date]:
+def parse_date(text: str | None) -> date | None:
     if text is None:
         return None
     parsed_datetime = dateparser.parse(text, languages=['ru'])

@@ -1,5 +1,5 @@
 import abc
-from typing import Any, Generic, Mapping, Optional, Type, TypeVar
+from typing import Any, Generic, Mapping, Type, TypeVar
 
 from app.db.base import DbModelProto
 from app.models.base import (
@@ -63,5 +63,5 @@ class MapperBase(abc.ABC, Generic[_Model, _DbModel]):
     __id_name__: str = 'id'
 
     @abc.abstractmethod
-    def parse(self, row: Mapping[str, Any]) -> Optional[_Model]:
+    def parse(self, row: Mapping[str, Any]) -> _Model | None:
         raise NotImplementedError

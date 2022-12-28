@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, Dict
+from typing import Any, Awaitable, Callable
 
 from aiogram.types import TelegramObject, Update, User
 from neoteroi import di
@@ -9,7 +9,7 @@ CONTAINER_ATTR = 'container'
 USER_ATTR = 'user'
 WORKSPACE_ATTR = 'workspace'
 
-_AiogramHandler = Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]]  # noqa: WPS221
+_AiogramHandler = Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]]  # noqa: WPS221
 
 
 class BaseMiddleware:
@@ -23,7 +23,7 @@ class CtxMiddleware(BaseMiddleware):
         self,
         update_handler: _AiogramHandler,
         update: Update,
-        update_data: Dict[str, Any],
+        update_data: dict[str, Any],
     ) -> Any:
         update_data[CONTAINER_ATTR] = self._container
 
@@ -35,7 +35,7 @@ class UserMiddleware(BaseMiddleware):
         self,
         update_handler: _AiogramHandler,
         update: Update,
-        update_data: Dict[str, Any],
+        update_data: dict[str, Any],
     ) -> Any:
         if update.message is not None:
             from_user = update.message.from_user
@@ -67,7 +67,7 @@ class WorkspaceMiddleware(BaseMiddleware):
         self,
         update_handler: _AiogramHandler,
         update: Update,
-        update_data: Dict[str, Any],
+        update_data: dict[str, Any],
     ) -> Any:
         if update.message is not None:
             from_user = update.message.from_user

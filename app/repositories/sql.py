@@ -1,9 +1,10 @@
 import logging
-from typing import TYPE_CHECKING, Any, List, Mapping, Optional, TypeVar, cast
+from typing import Any, Mapping, TypeVar, cast
 
 import asyncpg
 import databases
 import sqlalchemy as sa
+from databases.interfaces import Record
 
 from app.models.base import (
     BaseCreateRequest,
@@ -20,9 +21,6 @@ _ModelCreate = TypeVar('_ModelCreate', bound=BaseCreateRequest)
 _ModelUpdate = TypeVar('_ModelUpdate', bound=BaseUpdateRequest)
 _ModelId = TypeVar('_ModelId', bound=BaseIdentity)
 
-
-if TYPE_CHECKING:
-    from databases.interfaces import Record
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +98,7 @@ class DatabasesRepositoryImpl(  # noqa: WPS214
 
         return model
 
-    async def find_many(self, query: sa.sql.Select) -> List[_Model]:
+    async def find_many(self, query: sa.sql.Select) -> list[_Model]:
         try:
             rows = await self._db.fetch_all(query)
         except Exception as err:
@@ -113,7 +111,7 @@ class DatabasesRepositoryImpl(  # noqa: WPS214
                 models.append(model)
         return models
 
-    def parse(self, row: Optional['Record']) -> Optional[_Model]:
+    def parse(self, row: Record | None) -> _Model | None:
         if not row:
             raise exceptions.NotFoundError()
 

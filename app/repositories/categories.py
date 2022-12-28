@@ -1,6 +1,5 @@
 import abc
 import logging
-from typing import List
 
 import databases
 import sqlalchemy as sa
@@ -29,7 +28,7 @@ class CategoriesRepository(  # noqa: B024 FIXME
 ):
     """Abstract Categories Repository"""
 
-    async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> List[models.Category]:
+    async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> list[models.Category]:
         raise NotImplementedError
 
     async def get_by_workspace_id_and_name(
@@ -60,7 +59,7 @@ class CategoriesRepositoryImpl(CategoriesRepository):
     async def delete(self, id_: models.CategoryId) -> None:
         return await self._impl.delete(id_)
 
-    async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> List[models.Category]:
+    async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> list[models.Category]:
         query = sa.select([db.Category.__table__]).where(
             db.Category.workspace_id == workspace_id,
         )

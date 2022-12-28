@@ -1,6 +1,6 @@
 from datetime import date, datetime, timedelta
 from functools import partial
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from aiogram import Dispatcher, filters, types
 from aiogram.fsm.context import FSMContext
@@ -155,8 +155,8 @@ async def txn_at_date_handler(
     await state.set_state(AddTransactionStates.category)
 
 
-def _parse_date(raw_date: Optional[str]) -> Optional[date]:
-    parsed_date: Optional[date]
+def _parse_date(raw_date: str | None) -> date | None:
+    parsed_date: date | None
 
     if raw_date == TODAY:
         parsed_date = datetime.utcnow().date()  # FIXME localize date

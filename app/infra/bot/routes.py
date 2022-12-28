@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from aiogram.types import Update
 from fastapi import APIRouter, Body, Depends, FastAPI, Request
@@ -20,7 +20,7 @@ def register_routes(app: FastAPI) -> None:
 async def handle_webhook(
     request: Request,
     secret: str,
-    raw_update: Dict[str, Any] = Body(...),
+    raw_update: dict[str, Any] = Body(...),
     container: di.Container = Depends(get_container),
     security: OnlyTelegramNetwork = Depends(telegram_webhook_security),
 ) -> Response:

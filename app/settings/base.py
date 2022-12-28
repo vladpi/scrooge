@@ -1,10 +1,10 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import PostgresDsn
 
 
 class SQLAlchemyPostgresDsn(PostgresDsn):
-    def __new__(cls, url: Optional[str], **kwargs: Any) -> 'SQLAlchemyPostgresDsn':
+    def __new__(cls, url: str | None, **kwargs: Any) -> 'SQLAlchemyPostgresDsn':
         if url and url.startswith('postgres://'):
             url = url.replace('postgres://', 'postgresql://')
 

@@ -1,11 +1,10 @@
 import abc
 from datetime import datetime
-from typing import Union
 from uuid import UUID
 
 import pydantic
 
-AllowedIdType = Union[int, str]
+AllowedIdType = int | str
 
 
 class BaseIdentity(abc.ABC):  # noqa: B024

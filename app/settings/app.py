@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseSettings, Field, HttpUrl, RedisDsn, SecretStr
 
 from . import base
@@ -7,9 +5,9 @@ from . import base
 
 class BotSettings(BaseSettings):
     TOKEN: SecretStr
-    WEBHOOK_HOST: Optional[HttpUrl] = None
+    WEBHOOK_HOST: HttpUrl | None = None
 
-    REDIS_URL: Optional[RedisDsn] = None
+    REDIS_URL: RedisDsn | None = None
 
     class Config:
         env_prefix = 'BOT_'

@@ -1,6 +1,3 @@
-from typing import Optional, Union
-
-
 class RepositoryError(Exception):
     """Base repository error"""
 
@@ -24,5 +21,5 @@ class UpdateError(RepositoryError):
 class MappingError(RepositoryError):
     msg = "model wasn't properly mapped from DB"
 
-    def __init__(self, msg: Optional[Union[str, Exception]] = None) -> None:
+    def __init__(self, msg: str | Exception | None = None) -> None:
         super().__init__(msg or self.msg)
