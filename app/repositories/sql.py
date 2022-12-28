@@ -40,7 +40,7 @@ class DatabasesRepositoryImpl(  # noqa: WPS214
         try:
             query = (
                 self.DB_TABLE.insert()
-                .values(create_model.dict(exclude_unset=True))
+                .values(create_model.dict(exclude_none=True))
                 .returning(self.DB_TABLE)
             )
 
