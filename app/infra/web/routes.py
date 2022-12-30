@@ -60,6 +60,7 @@ async def handle_tg_login_callback(
             username=callback_data.username,
             first_name=callback_data.first_name,
             last_name=callback_data.last_name,
+            avatar_url=callback_data.photo_url,
         ),
     )
 

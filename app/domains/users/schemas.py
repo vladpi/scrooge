@@ -9,3 +9,5 @@ class CreateOrUpdateTelegramUserRequest(BaseModel):
     username: str | None = None
     first_name: str | None = None
     last_name: str | None = None
+
+    avatar_url: str | None = None

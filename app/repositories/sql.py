@@ -64,7 +64,7 @@ class DatabasesRepositoryImpl(  # noqa: WPS214
             query = (
                 self.DB_TABLE.update()
                 .where(self.DB_MODEL_ID == id_)
-                .values(update_model.dict())
+                .values(update_model.dict(exclude_unset=True))
                 .returning(self.DB_TABLE)
             )
 
