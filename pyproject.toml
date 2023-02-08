@@ -23,7 +23,7 @@ Jinja2 = "^3.1.2"
 Starlette-WTF = "^0.4.3"
 aiogram = "3.0.0b6"
 redis = "^4.4.0"
-neoteroi-di = { git = "https://github.com/Neoteroi/rodi.git", branch = "main" }
+rodi = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.971"

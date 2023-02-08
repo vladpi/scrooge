@@ -772,21 +772,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "neoteroi-di"
-version = "0.0.2"
-description = "Implementation of dependency injection for Python 3"
-category = "main"
-optional = false
-python-versions = ">=3.8"
-develop = false
-
-[package.source]
-type = "git"
-url = "https://github.com/Neoteroi/rodi.git"
-reference = "main"
-resolved_reference = "c514d3da09b6723c006e9b38a4eac78cdf5b2493"
-
-[[package]]
 name = "nodeenv"
 version = "1.7.0"
 description = "Node.js virtual environment builder"
@@ -1038,6 +1023,14 @@ python-versions = "*"
 
 [package.dependencies]
 docutils = ">=0.11,<1.0"
+
+[[package]]
+name = "rodi"
+version = "2.0.0"
+description = "Implementation of dependency injection for Python 3"
+category = "main"
+optional = false
+python-versions = ">=3.7"
 
 [[package]]
 name = "six"
@@ -1303,7 +1296,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "8ff314b834cf6db3f910df23a9bcd1675e8a3ace4790fe3aac82fc331180c3fc"
+content-hash = "21f5f0774543eca7539dc4cab33313c32fd1fc9ab3265ef9b586e487936c4738"
 
 [metadata.files]
 aiofiles = []
@@ -1443,7 +1436,6 @@ mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
 ]
-neoteroi-di = []
 nodeenv = []
 passlib = [
     {file = "passlib-1.7.4-py2.py3-none-any.whl", hash = "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1"},
@@ -1518,6 +1510,7 @@ pyyaml = [
 redis = []
 regex = []
 restructuredtext-lint = []
+rodi = []
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
