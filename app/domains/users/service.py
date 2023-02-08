@@ -21,15 +21,24 @@ class UsersService:
         request: CreateOrUpdateTelegramUserRequest,
     ) -> models.TelegramUser:
         try:
-            telegram_user = await self._telegram_users_repo.get(request.telegram_user_id)
-            return await self._telegram_users_repo.update(
-                telegram_user.id,
+            # telegram_user = await self._telegram_users_repo.get(request.telegram_user_id)
+            telegram_user = await self._telegram_users_repo.update(
+                request.telegram_user_id,
                 models.TelegramUserUpdate(
                     username=request.username,
                     first_name=request.first_name,
                     last_name=request.last_name,
                 ),
             )
+            await self._users_repo.update(
+                telegram_user.user_id,
+                models.UserUpdate(
+                    first_name=request.first_name,
+                    last_name=request.last_name,
+                    avatar_url=request.avatar_url,
+                ),
+            )
+            return telegram_user
         except repositories.NotFoundError:
             logger.info(
                 f'Not found Telegram User with id#{request.telegram_user_id} – creating new',
@@ -42,7 +51,13 @@ class UsersService:
         request: CreateOrUpdateTelegramUserRequest,
     ) -> models.TelegramUser:
         # TODO transaction and error handling
-        user = await self._users_repo.create(models.UserCreate())
+        user = await self._users_repo.create(
+            models.UserCreate(
+                first_name=request.first_name,
+                last_name=request.last_name,
+                avatar_url=request.avatar_url,
+            ),
+        )
         return await self._telegram_users_repo.create(
             models.TelegramUserCreate(
                 id=request.telegram_user_id,
