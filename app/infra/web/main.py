@@ -1,7 +1,7 @@
 import logging
 
 import fastapi
-from neoteroi import di
+import rodi
 from starlette.middleware import Middleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette_wtf import CSRFProtectMiddleware
@@ -18,7 +18,7 @@ APP_TITLE = 'scrooge-web'
 SETTINGS = settings.AppSettings()
 
 
-def create_app(container: di.Container) -> fastapi.FastAPI:
+def create_app(container: rodi.Container) -> fastapi.FastAPI:
     logger.info(f'Creating {APP_TITLE} app')
     app = fastapi.FastAPI(
         title=APP_TITLE,

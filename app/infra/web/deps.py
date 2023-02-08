@@ -1,12 +1,12 @@
+import rodi
 from fastapi import Depends, Request
 from fastapi.security import SecurityScopes
 from fastapi_login import LoginManager
-from neoteroi import di
 
 from app import models
 
 
-async def get_container(request: Request) -> di.Container:
+async def get_container(request: Request) -> rodi.Container:
     return request.app.state.container
 
 

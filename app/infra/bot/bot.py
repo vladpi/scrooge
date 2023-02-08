@@ -1,11 +1,11 @@
 import logging
 
 import aiogram
+import rodi
 from aiogram.fsm.storage.base import BaseStorage
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import BotCommand
-from neoteroi import di
 from redis.asyncio.client import Redis
 
 from app.settings import BotSettings
@@ -51,7 +51,7 @@ class Dispatcher(aiogram.Dispatcher):
         self,
         bot: aiogram.Bot,
         settings: BotSettings,
-        container: di.Container,
+        container: rodi.Container,
     ) -> None:
         storage: BaseStorage = MemoryStorage()
 

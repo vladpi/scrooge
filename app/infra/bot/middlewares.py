@@ -1,7 +1,7 @@
 from typing import Any, Awaitable, Callable
 
+import rodi
 from aiogram.types import TelegramObject, Update, User
-from neoteroi import di
 
 from app import domains, models
 
@@ -13,7 +13,7 @@ _AiogramHandler = Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]]  # 
 
 
 class BaseMiddleware:
-    def __init__(self, container: di.Container) -> None:
+    def __init__(self, container: rodi.Container) -> None:
         super().__init__()
         self._container = container
 

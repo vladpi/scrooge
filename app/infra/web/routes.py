@@ -1,11 +1,11 @@
 import logging
 from datetime import timedelta
 
+import rodi
 from fastapi import APIRouter, Depends, FastAPI, Request, status
 from fastapi.responses import RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi_login import LoginManager
-from neoteroi import di
 
 from app import domains, models
 from app.domains.users.schemas import CreateOrUpdateTelegramUserRequest
@@ -44,7 +44,7 @@ async def get_login_page(request: Request) -> Response:
 async def handle_tg_login_callback(
     request: Request,
     callback_data: TelegramLoginCallbackRequestSchema = Depends(),
-    container: di.Container = Depends(deps.get_container),
+    container: rodi.Container = Depends(deps.get_container),
     login_manager: LoginManager = Depends(deps.get_login_manager),
 ) -> Response:
     logger.debug(request.query_params)

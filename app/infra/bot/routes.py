@@ -1,9 +1,9 @@
 from typing import Any
 
+import rodi
 from aiogram.types import Update
 from fastapi import APIRouter, Body, Depends, FastAPI, Request
 from fastapi_security_telegram_webhook import OnlyTelegramNetwork
-from neoteroi import di
 from starlette import status
 from starlette.responses import Response
 
@@ -21,7 +21,7 @@ async def handle_webhook(
     request: Request,
     secret: str,
     raw_update: dict[str, Any] = Body(...),
-    container: di.Container = Depends(get_container),
+    container: rodi.Container = Depends(get_container),
     security: OnlyTelegramNetwork = Depends(telegram_webhook_security),
 ) -> Response:
 

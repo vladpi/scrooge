@@ -1,5 +1,5 @@
 import databases
-from neoteroi import di
+import rodi
 
 from app import domains, repositories, settings
 
@@ -22,8 +22,8 @@ SERVICES = (
 )
 
 
-def get_container() -> di.Container:  # noqa: WPS210
-    container = di.Container()
+def get_container() -> rodi.Container:  # noqa: WPS210
+    container = rodi.Container()
 
     app_settings = settings.AppSettings()
     bot_settings = settings.BotSettings()
