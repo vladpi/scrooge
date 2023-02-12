@@ -1,4 +1,4 @@
-import sqlalchemy as sa
+from sqlalchemy.orm import Mapped
 
 from . import base, columns
 
@@ -6,11 +6,8 @@ from . import base, columns
 class Workspace(base.DbModelBase):
     __tablename__ = 'workspaces'
 
-    id = columns.UUID_ID.copy()
-    owner_id = sa.Column(
-        sa.ForeignKey('users.id'),
-        nullable=False,
-    )  # type: ignore
+    id: Mapped[columns.uuid_pk]
+    owner_id: Mapped[columns.users_fk]
 
-    created_at = columns.CREATED_AT.copy()
-    updated_at = columns.UPDATED_AT.copy()
+    created_at: Mapped[columns.created_at]
+    updated_at: Mapped[columns.updated_at]

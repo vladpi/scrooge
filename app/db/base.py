@@ -1,7 +1,7 @@
 import typing
 
 import sqlalchemy as sa
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 
 
 class DbModelProto(typing.Protocol):
@@ -22,6 +22,9 @@ convention = {
     'pk': 'pk__%(table_name)s',
 }
 
-METADATA = sa.MetaData(naming_convention=convention)
-DbModelBase = declarative_base(metadata=METADATA)
-DbModelBase = typing.cast(typing.Type[DbModelProto], DbModelBase)  # type: ignore
+
+METADATA = sa.MetaData(naming_convention=convention)  # type: ignore
+
+
+class DbModelBase(DeclarativeBase):
+    metadata = METADATA

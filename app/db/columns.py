@@ -1,33 +1,80 @@
+from datetime import datetime
+from uuid import UUID
+
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.orm import mapped_column
+from typing_extensions import Annotated
 
-# to reuse these columns, use .copy() method
+uuid_pk = Annotated[
+    UUID,
+    mapped_column(
+        postgresql.UUID,
+        primary_key=True,
+        server_default=sa.text('gen_random_uuid()'),
+    ),
+]
 
-UUID_ID = sa.Column(
-    'id',
-    postgresql.UUID,
-    primary_key=True,
-    server_default=sa.text('gen_random_uuid()'),
-)
 
-INT_ID = sa.Column(
-    'id',
-    sa.BIGINT,
-    primary_key=True,
-    autoincrement=True,
-)
+int_pk = Annotated[
+    int,
+    mapped_column(
+        sa.BIGINT,
+        primary_key=True,
+        autoincrement=True,
+    ),
+]
 
-CREATED_AT = sa.Column(
-    'created_at',
-    sa.TIMESTAMP,
-    server_default=sa.func.now(),
-    nullable=False,
-)
 
-UPDATED_AT = sa.Column(
-    'updated_at',
-    sa.TIMESTAMP,
-    server_default=sa.func.now(),
-    onupdate=sa.func.now(),
-    nullable=False,
-)
+created_at = Annotated[
+    datetime,
+    mapped_column(
+        sa.TIMESTAMP,
+        server_default=sa.func.now(),
+        nullable=False,
+    ),
+]
+
+updated_at = Annotated[
+    datetime,
+    mapped_column(
+        sa.TIMESTAMP,
+        server_default=sa.func.now(),
+        onupdate=sa.func.now(),
+        nullable=False,
+    ),
+]
+
+
+users_fk = Annotated[
+    UUID,
+    mapped_column(
+        sa.ForeignKey('users.id'),
+        nullable=False,
+    ),
+]
+
+
+workspaces_fk = Annotated[
+    UUID,
+    mapped_column(
+        sa.ForeignKey('workspaces.id'),
+        nullable=False,
+    ),
+]
+
+categories_fk = Annotated[
+    UUID,
+    mapped_column(
+        sa.ForeignKey('categories.id'),
+        nullable=False,
+    ),
+]
+
+accounts_fk = Annotated[
+    UUID,
+    mapped_column(
+        sa.ForeignKey('accounts.id'),
+        nullable=False,
+    ),
+]

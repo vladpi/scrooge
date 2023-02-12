@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+from sqlalchemy.orm import Mapped, mapped_column
 
 from . import base, columns
 
@@ -6,13 +7,13 @@ from . import base, columns
 class Category(base.DbModelBase):
     __tablename__ = 'categories'
 
-    id = columns.UUID_ID.copy()
-    workspace_id = sa.Column(sa.ForeignKey('workspaces.id'), nullable=False)  # type: ignore
+    id: Mapped[columns.uuid_pk]
+    workspace_id: Mapped[columns.workspaces_fk]
 
-    created_at = columns.CREATED_AT.copy()
-    updated_at = columns.UPDATED_AT.copy()
+    created_at: Mapped[columns.created_at]
+    updated_at: Mapped[columns.updated_at]
 
-    name = sa.Column(sa.Text, nullable=False)
+    name: Mapped[str]
 
-    is_income = sa.Column(sa.Boolean, server_default=sa.true(), nullable=False)
-    is_outcome = sa.Column(sa.Boolean, server_default=sa.true(), nullable=False)
+    is_income: Mapped[bool] = mapped_column(server_default=sa.true())
+    is_outcome: Mapped[bool] = mapped_column(server_default=sa.true())

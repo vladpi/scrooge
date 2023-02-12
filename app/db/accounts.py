@@ -1,4 +1,6 @@
-import sqlalchemy as sa
+from decimal import Decimal
+
+from sqlalchemy.orm import Mapped
 
 from . import base, columns
 
@@ -6,13 +8,13 @@ from . import base, columns
 class Account(base.DbModelBase):
     __tablename__ = 'accounts'
 
-    id = columns.UUID_ID.copy()
-    workspace_id = sa.Column(sa.ForeignKey('workspaces.id'), nullable=False)  # type: ignore
+    id: Mapped[columns.uuid_pk]
+    workspace_id: Mapped[columns.workspaces_fk]
 
-    created_at = columns.CREATED_AT.copy()
-    updated_at = columns.UPDATED_AT.copy()
+    created_at: Mapped[columns.created_at]
+    updated_at: Mapped[columns.created_at]
 
-    name = sa.Column(sa.Text, nullable=False)
+    name: Mapped[str]
 
-    balance = sa.Column(sa.Numeric, nullable=False)
-    currency = sa.Column(sa.Text, nullable=False)
+    balance: Mapped[Decimal]
+    currency: Mapped[str]
