@@ -1,10 +1,8 @@
 import logging
-from typing import Any, Mapping, TypeVar, cast
+from typing import Generic, TypeVar
 
-import asyncpg
-import databases
 import sqlalchemy as sa
-from databases.interfaces import Record
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.models.base import (
     BaseCreateRequest,
@@ -14,7 +12,7 @@ from app.models.base import (
 )
 
 from . import exceptions
-from .base import MapperBase, RepositoryBase
+from .base import MapperBase
 
 _Model = TypeVar('_Model', bound=BaseModel)
 _ModelCreate = TypeVar('_ModelCreate', bound=BaseCreateRequest)
@@ -25,30 +23,30 @@ _ModelId = TypeVar('_ModelId', bound=BaseIdentity)
 logger = logging.getLogger(__name__)
 
 
-class DatabasesRepositoryImpl(  # noqa: WPS214
-    RepositoryBase[_Model, _ModelId, _ModelCreate, _ModelUpdate],
-):
-    def __init__(self, db: databases.Database, mapper: MapperBase) -> None:
-        self._db = db
+class SQLAlchemyRepository(Generic[_Model, _ModelId, _ModelCreate, _ModelUpdate]):
+    def __init__(self, db_engine: AsyncEngine, mapper: MapperBase) -> None:
+        self._db_engine = db_engine
 
         self._mapper = mapper
         self.DB_MODEL = mapper.__db_model__
         self.DB_MODEL_ID = getattr(self.DB_MODEL, mapper.__id_name__)
-        self.DB_TABLE = self.DB_MODEL.__table__
 
     async def create(self, create_model: _ModelCreate) -> _Model:
-        try:
+        async with self._db_engine.connect() as conn:
             query = (
-                self.DB_TABLE.insert()
+                sa.insert(self.DB_MODEL)
                 .values(create_model.dict(exclude_none=True))
-                .returning(self.DB_TABLE)
+                .returning(self.DB_MODEL)
             )
 
-            row = await self._db.fetch_one(query)
-        except asyncpg.UniqueViolationError as err:
-            raise exceptions.DuplicateError(err)
-        except Exception as err:
-            raise exceptions.CreateError(err)
+            try:
+                result = await conn.execute(query)
+                row = result.one()
+            # FIXME
+            # except asyncpg.UniqueViolationError as err:
+            # raise exceptions.DuplicateError(err)
+            except Exception as err:
+                raise exceptions.CreateError(err)
 
         model = self.parse(row)
         if model is None:
@@ -56,67 +54,57 @@ class DatabasesRepositoryImpl(  # noqa: WPS214
         return model
 
     async def get(self, id_: _ModelId) -> _Model:
-        query = self.DB_TABLE.select(self.DB_MODEL_ID == id_)
-        return await self.find_one(query)
+        query = sa.select(self.DB_MODEL).where(self.DB_MODEL_ID == id_)
+        return await self.fetch_one(query)
 
     async def update(self, id_: _ModelId, update_model: _ModelUpdate) -> _Model:
-        try:
+        async with self._db_engine.connect() as conn:
             query = (
-                self.DB_TABLE.update()
+                sa.update(self.DB_MODEL)
                 .where(self.DB_MODEL_ID == id_)
                 .values(update_model.dict(exclude_unset=True))
-                .returning(self.DB_TABLE)
+                .returning(self.DB_MODEL)
             )
 
-            row = await self._db.fetch_one(query)
-        except Exception as err:
-            raise exceptions.UpdateError(err)
+            try:
+                result = await conn.execute(query)
+                row = result.one()
+            except Exception as err:
+                raise exceptions.UpdateError(err)
 
-        model = self.parse(row)
-        if model is None:
-            raise exceptions.MappingError()
-        return model
+        return self.parse(row)
 
     async def delete(self, id_: _ModelId) -> None:
+        query = sa.delete(self.DB_MODEL).where(self.DB_MODEL_ID == id_)
+        async with self._db_engine.connect() as conn:
+            try:
+                await conn.execute(query)
+            except Exception as err:
+                raise exceptions.RepositoryError(err)
+
+    async def fetch_one(self, query: sa.sql.Select | sa.sql.Update) -> _Model:
+        async with self._db_engine.connect() as conn:
+            try:
+                result = await conn.execute(query)
+                row = result.one()
+            except Exception as err:
+                raise exceptions.RepositoryError(err)
+
+        return self.parse(row)
+
+    async def fetch_many(self, query: sa.sql.Select) -> list[_Model]:
+        async with self._db_engine.connect() as conn:
+            try:
+                result = await conn.execute(query)
+                rows = result.all()
+            except Exception as err:
+                raise exceptions.RepositoryError(err)
+
+        return [self.parse(row) for row in rows]
+
+    def parse(self, row: sa.Row) -> _Model:
         try:
-            query = self.DB_TABLE.delete(self.DB_MODEL_ID == id_)
-            return await self._db.execute(query)
-        except Exception as err:
-            raise exceptions.RepositoryError(err)
-
-    async def find_one(self, query: sa.sql.Select) -> _Model:
-        query = query.limit(1)
-
-        try:
-            row = await self._db.fetch_one(query)
-        except Exception as err:
-            raise exceptions.RepositoryError(err)
-
-        model = self.parse(row)
-        if not model:
-            raise exceptions.NotFoundError()
-
-        return model
-
-    async def find_many(self, query: sa.sql.Select) -> list[_Model]:
-        try:
-            rows = await self._db.fetch_all(query)
-        except Exception as err:
-            raise exceptions.RepositoryError(err)
-
-        models = []
-        for row in rows:
-            model = self.parse(row)
-            if model:
-                models.append(model)
-        return models
-
-    def parse(self, row: Record | None) -> _Model | None:
-        if not row:
-            raise exceptions.NotFoundError()
-
-        try:
-            model = self._mapper.parse(cast(Mapping[str, Any], row))
+            model = self._mapper.parse(row)
         except Exception as err:
             logger.error(
                 'Failed to parse model {0}. Error: {1}',
@@ -129,5 +117,5 @@ class DatabasesRepositoryImpl(  # noqa: WPS214
 
 
 class RelationalMapper(MapperBase):
-    def parse(self, row: Mapping[str, Any]) -> BaseModel:
-        return self.__model__(**row)
+    def parse(self, row: sa.Row) -> BaseModel:
+        return self.__model__(**row._asdict())

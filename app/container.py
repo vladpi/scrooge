@@ -1,5 +1,5 @@
-import databases
 import rodi
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 from app import domains, repositories, settings
 
@@ -38,8 +38,8 @@ def get_container() -> rodi.Container:  # noqa: WPS210
     )
 
     container.register(
-        databases.Database,
-        instance=databases.Database(url=app_settings.DATABASE_URL),
+        AsyncEngine,
+        instance=create_async_engine(url=app_settings.DATABASE_URL),
     )
 
     for interface, implementation in REPOS:

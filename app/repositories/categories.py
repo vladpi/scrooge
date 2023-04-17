@@ -1,13 +1,12 @@
-import abc
 import logging
+from typing import Protocol
 
-import databases
 import sqlalchemy as sa
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app import db, models
 
-from .base import RepositoryBase
-from .sql import DatabasesRepositoryImpl, RelationalMapper
+from .sql import RelationalMapper, SQLAlchemyRepository
 
 logger = logging.getLogger(__name__)
 
@@ -17,31 +16,42 @@ class _CategoriesMapper(RelationalMapper):
     __db_model__ = db.Category
 
 
-class CategoriesRepository(  # noqa: B024 FIXME
-    RepositoryBase[
-        models.Category,
-        models.CategoryId,
-        models.CategoryCreate,
-        models.CategoryUpdate,
-    ],
-    abc.ABC,
-):
-    """Abstract Categories Repository"""
+class CategoriesRepository(Protocol):
+    async def create(self, create_model: models.CategoryCreate) -> models.Category:
+        ...
+
+    async def get(self, id_: models.CategoryId) -> models.Category:
+        ...
+
+    async def update(
+        self,
+        id_: models.CategoryId,
+        update_model: models.CategoryUpdate,
+    ) -> models.Category:
+        ...
+
+    async def delete(self, id_: models.CategoryId) -> None:
+        ...
 
     async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> list[models.Category]:
-        raise NotImplementedError
+        ...
 
     async def get_by_workspace_id_and_name(
         self,
         workspace_id: models.WorkspaceId,
         name: str,
     ) -> models.Category:
-        raise NotImplementedError
+        ...
 
 
 class CategoriesRepositoryImpl(CategoriesRepository):
-    def __init__(self, db_conn: databases.Database) -> None:
-        self._impl: DatabasesRepositoryImpl = DatabasesRepositoryImpl(db_conn, _CategoriesMapper())
+    def __init__(self, db_engine: AsyncEngine) -> None:
+        self._impl: SQLAlchemyRepository[
+            models.Category,
+            models.CategoryId,
+            models.CategoryCreate,
+            models.CategoryUpdate,
+        ] = SQLAlchemyRepository(db_engine=db_engine, mapper=_CategoriesMapper())
 
     async def create(self, create_model: models.CategoryCreate) -> models.Category:
         return await self._impl.create(create_model)
@@ -60,20 +70,18 @@ class CategoriesRepositoryImpl(CategoriesRepository):
         return await self._impl.delete(id_)
 
     async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> list[models.Category]:
-        query = sa.select([db.Category.__table__]).where(
-            db.Category.workspace_id == workspace_id,
-        )
-        return await self._impl.find_many(query)
+        query = sa.select(db.Category).where(db.Category.workspace_id == workspace_id)
+        return await self._impl.fetch_many(query)
 
     async def get_by_workspace_id_and_name(
         self,
         workspace_id: models.WorkspaceId,
         name: str,
     ) -> models.Category:
-        query = sa.select([db.Category.__table__]).where(
+        query = sa.select(db.Category).where(
             sa.and_(
                 db.Category.workspace_id == workspace_id,
                 db.Category.name == name,
             ),
         )
-        return await self._impl.find_one(query)
+        return await self._impl.fetch_one(query)

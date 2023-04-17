@@ -22,7 +22,7 @@ Starlette-WTF = "^0.4.3"
 aiogram = "3.0.0b6"
 redis = "^4.4.0"
 rodi = "^2.0.0"
-SQLAlchemy = {extras = ["asyncio"], version = "^2.0.2"}
+SQLAlchemy = {extras = ["asyncio"], version = "^2.0.9"}
 
 [tool.poetry.dev-dependencies]
 mypy = "^1.0"

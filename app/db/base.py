@@ -1,12 +1,5 @@
-import typing
-
 import sqlalchemy as sa
 from sqlalchemy.orm import DeclarativeBase
-
-
-class DbModelProto(typing.Protocol):
-    __table__: sa.Table
-
 
 # Default naming convention for all indexes and constraints
 # See why this is important and how it would save your time:
