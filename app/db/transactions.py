@@ -1,4 +1,7 @@
-import sqlalchemy as sa
+from datetime import datetime
+from decimal import Decimal
+
+from sqlalchemy.orm import Mapped, mapped_column
 
 from . import base, columns
 
@@ -6,20 +9,20 @@ from . import base, columns
 class Transaction(base.DbModelBase):
     __tablename__ = 'transactions'
 
-    id = columns.UUID_ID.copy()
-    user_id = sa.Column(sa.ForeignKey('users.id'), nullable=False)  # type: ignore
+    id: Mapped[columns.uuid_pk]
+    user_id: Mapped[columns.users_fk]
 
-    created_at = columns.CREATED_AT.copy()
-    updated_at = columns.UPDATED_AT.copy()
+    created_at: Mapped[columns.created_at]
+    updated_at: Mapped[columns.created_at]
 
-    at_date = sa.Column(sa.TIMESTAMP, nullable=False)
-    category_id = sa.Column(sa.ForeignKey('categories.id'), nullable=False)  # type: ignore
-    comment = sa.Column(sa.Text, nullable=True)
+    at_date: Mapped[datetime]
+    category_id: Mapped[columns.categories_fk]
+    comment: Mapped[str | None]
 
-    outcome_account_id = sa.Column(sa.ForeignKey('accounts.id'), nullable=True)  # type: ignore
-    outcome_currency = sa.Column(sa.Text, nullable=True)
-    outcome = sa.Column(sa.Numeric, nullable=True)
+    outcome_account_id: Mapped[columns.accounts_fk] = mapped_column(nullable=True)
+    outcome_currency: Mapped[str | None]
+    outcome: Mapped[Decimal | None]
 
-    income_account_id = sa.Column(sa.ForeignKey('accounts.id'), nullable=True)  # type: ignore
-    income_currency = sa.Column(sa.Text, nullable=True)
-    income = sa.Column(sa.Numeric, nullable=True)
+    income_account_id: Mapped[columns.accounts_fk] = mapped_column(nullable=True)
+    income_currency: Mapped[str | None]
+    income: Mapped[Decimal | None]

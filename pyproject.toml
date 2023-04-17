@@ -6,11 +6,9 @@ authors = ["Vlad Pastushenko <iam@vladpi.me>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-SQLAlchemy = "^1.4.41"
 alembic = "^1.8.1"
 pydantic = {extras = ["dotenv"], version = "^1.10.2"}
 fastapi = "^0.82.0"
-databases = {extras = ["postgresql"], version = "^0.6.1"}
 fastapi-security-telegram-webhook = "^0.2.0"
 gunicorn = "^20.1.0"
 uvicorn = "^0.18.3"
@@ -24,9 +22,10 @@ Starlette-WTF = "^0.4.3"
 aiogram = "3.0.0b6"
 redis = "^4.4.0"
 rodi = "^2.0.0"
+SQLAlchemy = {extras = ["asyncio"], version = "^2.0.9"}
 
 [tool.poetry.dev-dependencies]
-mypy = "^0.971"
+mypy = "^1.0"
 flake8 = "^4"
 flake8-quotes = "^3.3.1"
 black = "^22.8.0"
@@ -34,7 +33,6 @@ isort = "^5.10.1"
 wemake-python-styleguide = "^0.16.1"
 pre-commit = "^2.20.0"
 flake8-annotations = "^2.9.1"
-sqlalchemy-stubs = "^0.4"
 types-dateparser = "^1.1.4"
 types-redis = "^4.3.21"
 
@@ -66,7 +64,7 @@ use_parentheses = true
 multi_line_output = 3
 
 [tool.mypy]
-plugins = ["sqlmypy", "pydantic.mypy"]
+plugins = ["sqlalchemy.ext.mypy.plugin", "pydantic.mypy"]
 ignore_missing_imports = true
 follow_imports = "normal"
 check_untyped_defs = true

@@ -1,16 +1,14 @@
-import abc
 import logging
 from decimal import Decimal
-from typing import List
+from typing import List, Protocol
 
-import databases
 import sqlalchemy as sa
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app import db, models
 
-from .base import RepositoryBase
-from .exceptions import MappingError, UpdateError
-from .sql import DatabasesRepositoryImpl, RelationalMapper
+from .exceptions import UpdateError
+from .sql import RelationalMapper, SQLAlchemyRepository
 
 logger = logging.getLogger(__name__)
 
@@ -20,35 +18,45 @@ class _AccountsMapper(RelationalMapper):
     __db_model__ = db.Account
 
 
-class AccountsRepository(  # noqa: B024 FIXME
-    RepositoryBase[
-        models.Account,
-        models.AccountId,
-        models.AccountCreate,
-        models.AccountUpdate,
-    ],
-    abc.ABC,
-):
-    """Abstract Categories Repository"""
+class AccountsRepository(Protocol):
+    async def create(self, create_model: models.AccountCreate) -> models.Account:
+        ...
+
+    async def get(self, id_: models.AccountId) -> models.Account:
+        ...
+
+    async def update(
+        self,
+        id_: models.AccountId,
+        update_model: models.AccountUpdate,
+    ) -> models.Account:
+        ...
+
+    async def delete(self, id_: models.AccountId) -> None:
+        ...
 
     async def update_balance(self, id_: models.AccountId, diff: Decimal) -> models.Account:
-        raise NotImplementedError
+        ...
 
     async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> List[models.Account]:
-        raise NotImplementedError
+        ...
 
     async def get_by_workspace_id_and_name(
         self,
         workspace_id: models.WorkspaceId,
         name: str,
     ) -> models.Account:
-        raise NotImplementedError
+        ...
 
 
 class AccountsRepositoryImpl(AccountsRepository):  # noqa: WPS214
-    def __init__(self, db_conn: databases.Database) -> None:
-        self._conn = db_conn
-        self._impl: DatabasesRepositoryImpl = DatabasesRepositoryImpl(db_conn, _AccountsMapper())
+    def __init__(self, db_engine: AsyncEngine) -> None:
+        self._impl: SQLAlchemyRepository[
+            models.Account,
+            models.AccountId,
+            models.AccountCreate,
+            models.AccountUpdate,
+        ] = SQLAlchemyRepository(db_engine=db_engine, mapper=_AccountsMapper())
 
     async def create(self, create_model: models.AccountCreate) -> models.Account:
         return await self._impl.create(create_model)
@@ -68,7 +76,7 @@ class AccountsRepositoryImpl(AccountsRepository):  # noqa: WPS214
 
     async def update_balance(self, id_: models.AccountId, diff: Decimal) -> models.Account:
         query = (
-            sa.update(db.Account.__table__)
+            sa.update(db.Account)
             .values(balance=db.Account.balance + diff)
             .where(db.Account.id == id_)
             .returning(db.Account.__table__)
@@ -76,31 +84,23 @@ class AccountsRepositoryImpl(AccountsRepository):  # noqa: WPS214
 
         # FIXME better errors handling
         try:
-            row = await self._conn.fetch_one(query)
+            return await self._impl.fetch_one(query)
         except Exception as ex:
             raise UpdateError(ex)
 
-        account = self._impl.parse(row)
-        if account is None:
-            raise MappingError()
-
-        return account
-
     async def get_by_workspace_id(self, workspace_id: models.WorkspaceId) -> List[models.Account]:
-        query = sa.select([db.Account.__table__]).where(
-            db.Account.workspace_id == workspace_id,
-        )
-        return await self._impl.find_many(query)
+        query = sa.select(db.Account).where(db.Account.workspace_id == workspace_id)
+        return await self._impl.fetch_many(query)
 
     async def get_by_workspace_id_and_name(
         self,
         workspace_id: models.WorkspaceId,
         name: str,
     ) -> models.Account:
-        query = sa.select([db.Account.__table__]).where(
+        query = sa.select(db.Account).where(
             sa.and_(
                 db.Account.workspace_id == workspace_id,
                 db.Account.name == name,
             ),
         )
-        return await self._impl.find_one(query)
+        return await self._impl.fetch_one(query)

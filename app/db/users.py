@@ -1,4 +1,4 @@
-import sqlalchemy as sa
+from sqlalchemy.orm import Mapped, mapped_column
 
 from . import base, columns
 
@@ -6,30 +6,26 @@ from . import base, columns
 class User(base.DbModelBase):
     __tablename__ = 'users'
 
-    id = columns.UUID_ID.copy()
+    id: Mapped[columns.uuid_pk]
 
-    created_at = columns.CREATED_AT.copy()
-    updated_at = columns.UPDATED_AT.copy()
+    created_at: Mapped[columns.created_at]
+    updated_at: Mapped[columns.updated_at]
 
-    first_name = sa.Column(sa.Text)
-    last_name = sa.Column(sa.Text)
+    first_name: Mapped[str | None]
+    last_name: Mapped[str | None]
 
-    avatar_url = sa.Column(sa.Text)
+    avatar_url: Mapped[str | None]
 
 
 class TelegramUser(base.DbModelBase):
     __tablename__ = 'telegram_users'
 
-    id = columns.INT_ID.copy()
-    user_id = sa.Column(
-        sa.ForeignKey('users.id'),
-        nullable=False,
-        unique=True,
-    )  # type: ignore
+    id: Mapped[columns.int_pk]
+    user_id: Mapped[columns.users_fk] = mapped_column(unique=True)
 
-    created_at = columns.CREATED_AT.copy()
-    updated_at = columns.UPDATED_AT.copy()
+    created_at: Mapped[columns.created_at]
+    updated_at: Mapped[columns.updated_at]
 
-    username = sa.Column(sa.Text)
-    first_name = sa.Column(sa.Text)
-    last_name = sa.Column(sa.Text)
+    username: Mapped[str | None]
+    first_name: Mapped[str | None]
+    last_name: Mapped[str | None]

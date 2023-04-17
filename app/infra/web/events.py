@@ -1,7 +1,6 @@
 import logging
 from typing import Callable
 
-import databases
 import fastapi
 
 logger = logging.getLogger(__name__)
@@ -17,21 +16,11 @@ def _on_startup(app: fastapi.FastAPI) -> Callable:
     async def startup_handler() -> None:  # noqa: WPS430
         logger.info(f'Starting app {app.title}')
 
-        db = app.state.container.resolve(databases.Database)
-        await db.connect()
-
     return startup_handler
 
 
 def _on_shutdown(app: fastapi.FastAPI) -> Callable:
     async def shutdown_handler() -> None:  # noqa: WPS430
         logger.info(f'Shutting down app {app.title}')
-
-        try:
-            db = app.state.container.resolve(databases.Database)
-            await db.disconnect()
-
-        except Exception:
-            logger.exception(f'Context of {app.title} is not properly configured, failed to close')
 
     return shutdown_handler
