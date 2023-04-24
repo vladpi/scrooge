@@ -28,14 +28,16 @@ async def index(
     request: Request,
     user: models.User = Depends(deps.authenticated_user),
 ) -> Response:
-    # FIXME если юзер не залогинен – редирект на информационную страницу с кнопкой логина
-
     return templates.TemplateResponse('index.html', context={'request': request, 'user': user})
 
 
 @router.get('/login')
-async def get_login_page(request: Request) -> Response:
-    # FIXME если юзер залогинен – редирект на главную
+async def get_login_page(
+    request: Request,
+    user: models.User | None = Depends(deps.maybe_authenticated_user),
+) -> Response:
+    if user is not None:
+        return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
 
     return templates.TemplateResponse('login.html', context={'request': request})
 

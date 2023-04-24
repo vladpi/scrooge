@@ -7,6 +7,10 @@ from app import models, repositories, settings
 LOGIN_PATH = '/login'
 
 
+class NotAuthenticatedError(Exception):
+    """Custom not authenticated exception"""
+
+
 class LoginManager(fastapi_login.LoginManager):
     def __init__(
         self,
@@ -17,6 +21,7 @@ class LoginManager(fastapi_login.LoginManager):
             app_settings.SECRET_KEY.get_secret_value(),
             token_url=LOGIN_PATH,
             use_cookie=True,
+            custom_exception=NotAuthenticatedError,
         )
         self._users_repo = users_repo
 

@@ -16,7 +16,18 @@ async def get_login_manager(request: Request) -> LoginManager:
 
 async def authenticated_user(
     request: Request,
-    security_scopes: SecurityScopes = None,
+    security_scopes: SecurityScopes,
     login_manager: LoginManager = Depends(get_login_manager),
 ) -> models.User:
     return await login_manager(request, security_scopes)
+
+
+async def maybe_authenticated_user(
+    request: Request,
+    security_scopes: SecurityScopes,
+    login_manager: LoginManager = Depends(get_login_manager),
+) -> models.User | None:
+    try:
+        return await login_manager(request, security_scopes)
+    except login_manager.not_authenticated_exception:
+        return None

@@ -8,6 +8,7 @@ from starlette_wtf import CSRFProtectMiddleware
 
 from app import repositories, settings
 
+from .error_handlers import register_error_handlers
 from .events import register_events
 from .routes import register_routes
 from .security import LoginManager
@@ -38,5 +39,6 @@ def create_app(container: rodi.Container) -> fastapi.FastAPI:
 
     register_events(app)
     register_routes(app)
+    register_error_handlers(app)
 
     return app
