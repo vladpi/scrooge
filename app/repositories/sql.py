@@ -121,4 +121,4 @@ class SQLAlchemyRepository(Generic[_Model, _ModelId, _ModelCreate, _ModelUpdate]
 
 class RelationalMapper(MapperBase):
     def parse(self, row: sa.Row) -> BaseModel:
-        return self.__model__(**row._asdic®t())
+        return self.__model__(**row._asdict())
