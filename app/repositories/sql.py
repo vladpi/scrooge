@@ -2,6 +2,7 @@ import logging
 from typing import Generic, TypeVar
 
 import sqlalchemy as sa
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.models.base import (
@@ -32,7 +33,7 @@ class SQLAlchemyRepository(Generic[_Model, _ModelId, _ModelCreate, _ModelUpdate]
         self.DB_MODEL_ID = getattr(self.DB_MODEL, mapper.__id_name__)
 
     async def create(self, create_model: _ModelCreate) -> _Model:
-        async with self._db_engine.connect() as conn:
+        async with self._db_engine.begin() as conn:
             query = (
                 sa.insert(self.DB_MODEL)
                 .values(create_model.dict(exclude_none=True))
@@ -58,7 +59,7 @@ class SQLAlchemyRepository(Generic[_Model, _ModelId, _ModelCreate, _ModelUpdate]
         return await self.fetch_one(query)
 
     async def update(self, id_: _ModelId, update_model: _ModelUpdate) -> _Model:
-        async with self._db_engine.connect() as conn:
+        async with self._db_engine.begin() as conn:
             query = (
                 sa.update(self.DB_MODEL)
                 .where(self.DB_MODEL_ID == id_)
@@ -76,24 +77,26 @@ class SQLAlchemyRepository(Generic[_Model, _ModelId, _ModelCreate, _ModelUpdate]
 
     async def delete(self, id_: _ModelId) -> None:
         query = sa.delete(self.DB_MODEL).where(self.DB_MODEL_ID == id_)
-        async with self._db_engine.connect() as conn:
+        async with self._db_engine.begin() as conn:
             try:
                 await conn.execute(query)
             except Exception as err:
                 raise exceptions.RepositoryError(err)
 
     async def fetch_one(self, query: sa.sql.Select | sa.sql.Update) -> _Model:
-        async with self._db_engine.connect() as conn:
+        async with self._db_engine.begin() as conn:
             try:
                 result = await conn.execute(query)
                 row = result.one()
+            except NoResultFound:
+                raise exceptions.NotFoundError()
             except Exception as err:
                 raise exceptions.RepositoryError(err)
 
         return self.parse(row)
 
     async def fetch_many(self, query: sa.sql.Select) -> list[_Model]:
-        async with self._db_engine.connect() as conn:
+        async with self._db_engine.begin() as conn:
             try:
                 result = await conn.execute(query)
                 rows = result.all()
@@ -118,4 +121,4 @@ class SQLAlchemyRepository(Generic[_Model, _ModelId, _ModelCreate, _ModelUpdate]
 
 class RelationalMapper(MapperBase):
     def parse(self, row: sa.Row) -> BaseModel:
-        return self.__model__(**row._asdict())
+        return self.__model__(**row._asdic®t())

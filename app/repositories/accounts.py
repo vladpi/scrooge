@@ -79,7 +79,7 @@ class AccountsRepositoryImpl(AccountsRepository):  # noqa: WPS214
             sa.update(db.Account)
             .values(balance=db.Account.balance + diff)
             .where(db.Account.id == id_)
-            .returning(db.Account.__table__)
+            .returning(db.Account)
         )
 
         # FIXME better errors handling

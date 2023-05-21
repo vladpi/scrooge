@@ -3,8 +3,8 @@ import asyncio
 import logging
 import pathlib
 
-import databases
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 from app import models, repositories, settings
 from app.adapters import zenmoney
@@ -29,14 +29,14 @@ class Args(BaseModel):
 class Context(ContextBase):
     app_settings: settings.AppSettings
 
-    db: databases.Database
+    db_engine: AsyncEngine
 
     categories_srv: CategoriesService
     accounts_srv: AccountsService
     transactions_srv: TransactionsService
 
     async def _do_close(self) -> None:
-        await self.db.disconnect()
+        await self.db_engine.dispose()
 
 
 async def make_context() -> Context:
@@ -52,12 +52,15 @@ async def _make_context() -> Context:  # noqa: WPS210
     logger.info('Initializing bot context')
 
     app_settings = settings.AppSettings()
-    db = databases.Database(app_settings.DATABASE_URL)
-    await db.connect()
 
-    categories_repo = repositories.CategoriesRepositoryImpl(db)
-    accounts_repo = repositories.AccountsRepositoryImpl(db)
-    transactions_repo = repositories.TransactionsRepositoryImpl(db)
+    db_engine = create_async_engine(
+        url=app_settings.DATABASE_URL,
+        echo=True,
+    )
+
+    categories_repo = repositories.CategoriesRepositoryImpl(db_engine)
+    accounts_repo = repositories.AccountsRepositoryImpl(db_engine)
+    transactions_repo = repositories.TransactionsRepositoryImpl(db_engine)
 
     categories_srv = CategoriesService(categories_repo)
     accounts_srv = AccountsService(accounts_repo)
@@ -65,7 +68,7 @@ async def _make_context() -> Context:  # noqa: WPS210
 
     return Context(
         app_settings=app_settings,
-        db=db,
+        db_engine=db_engine,
         categories_srv=categories_srv,
         accounts_srv=accounts_srv,
         transactions_srv=transactions_srv,
