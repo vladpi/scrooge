@@ -1,26 +1,14 @@
 [flake8]
-format = wemake
-show-source = true
 max-line-length = 100
 extend-ignore = E203
 ignore =
-    D,
-    WPS202,
-    WPS300,
-    WPS305,
-    WPS306, # Found class without a base class
-    WPS323,
-    WPS332, # Found walrus operator
-    WPS348,
-    WPS404,
-    B008,
     ANN101,
     ANN102,
     ANN401
-exclude = .git,.venv,migrations/env.py
-per-file-ignores =
-    app/settings/app.py: WPS115, WPS431
-    __init__.py: F401, WPS410, WPS412
-    app/logging.py: WPS226
-    migrations/*: WPS102, WPS118, WPS226
-max-try-body-length = 10
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    *.pyc,
+    *egg,
+    migrations/env.py

@@ -1,26 +1,36 @@
 # Scrooge – expense tracking
 
-Telegram Bot and Web app for personal and family expense tracking
+Web app for personal and family expense tracking
 
-## 💻 How to launch
+Project template for [BlackSheep](https://github.com/Neoteroi/BlackSheep)
+web framework to start Web APIs.
 
-It requires PostgreSQL and Redis.
+## Getting started
 
-1) Install dependencies via poetry:
+1. create a Python virtual environment
+2. install dependencies
+3. run the application
+
+### For Linux and Mac
 
 ```bash
-poetry install
+python -m venv venv
+
+source venv/bin/activate
+
+pip install -r requirements.txt
+
+python dev.py
 ```
-2) Create and fill `.env` file from [example](.env.example)
-3) Start bot:
+
+### For Windows
 
 ```bash
-python cmd/run_bot.py
-```
-4) Profit! Now you can interact with your bot.
+py -3.11 -m venv venv
 
+venv\Scripts\activate
 
-Also you can install pre-commit for linting and type checking:
-```bash
-pre-commit install
+pip install -r requirements.txt
+
+python dev.py
 ```
