@@ -16,13 +16,3 @@ class Login(Controller):
         # obtained from the calling request handler: 'index',
         # -> /views/home/index.html
         return self.view()
-
-    @get(None)
-    def example(self) -> Response:
-        # Since the @get() decorator is used explicitly with None, the URL path
-        # is obtained from the method name: "/example"
-
-        # Since the view function is called without parameters, the name is
-        # obtained from the calling request handler: 'example',
-        # -> /views/home/example.html
-        return self.view()
