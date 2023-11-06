@@ -1,0 +1,60 @@
+{%- extends 'layout.jinja' -%}
+
+{%- block body -%}
+<div class="page page-center">
+    <div class="container container-tight py-4">
+        <div class="text-center mb-4">
+            <h1 class="display-6 fw-bold">
+                Скрудж
+            </h1>
+        </div>
+        <div class="card card-md">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Регистрация</h2>
+                <div class="mb-3">
+                    <label class="form-label">Имя или логин</label>
+                    <input type="text" class="form-control" placeholder="Введи свое имя или логин">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">E-mail адрес</label>
+                    <input type="email" class="form-control" placeholder="Введи свой e-mail">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Пароль</label>
+                    <input type="password" class="form-control" placeholder="Введи свой пароль" autocomplete="off">
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                </div>
+            </div>
+            <div class="hr-text">или</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <a href="#" class="btn w-100">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/brand-telegram -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-telegram"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path>
+                            </svg>
+                            Войти при помощи Telegram
+                        </a>
+
+                        {#
+                        <script async src="https://telegram.org/js/telegram-widget.js?21"
+                            data-telegram-login="scrooge_test_bot" data-size="large" data-auth-url="/tg-callback"
+                            data-request-access="write">
+                            </script>
+                        #}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center text-secondary mt-3">
+            Уже есть аккаунт? <a href="/login" tabindex="-1">Войти!</a>
+        </div>
+    </div>
+</div>
+{%- endblock -%}

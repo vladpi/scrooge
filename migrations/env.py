@@ -1,31 +1,33 @@
+import os
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from data.sql.db_models import METADATA
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+MIGRATIONS_DATABASE_URL = os.environ.get("MIGRATIONS_DATABASE_URL", None)
+
+if MIGRATIONS_DATABASE_URL is not None:
+    # enable overriding the connection string, for GitHub Workflows;
+    # see workflows configuration to see how this is used
+    print("Overriding sqlalchemy.url with value from ENV...")
+    config.set_main_option("sqlalchemy.url", MIGRATIONS_DATABASE_URL)
+
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-
-from app.db import *
-
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from app.db.base import METADATA
-from app.settings import AppSettings
-
-config.set_main_option(
-    'sqlalchemy.url',
-    AppSettings().DATABASE_URL,
-)
 target_metadata = METADATA
 
 # other values from the config, defined by the needs of env.py,
@@ -66,7 +68,7 @@ def run_migrations_online() -> None:
 
     """
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

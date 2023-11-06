@@ -1,2 +1,0 @@
-from .schemas import CreateUserDefaultCategoriesRequest, CreateWorkspaceCategory
-from .service import CategoriesService

@@ -1,0 +1,215 @@
+{% extends 'layout.jinja' %}
+
+
+{% block page_header %}
+<!-- <div class="container-xl">
+    <div class="row g-2 align-items-center">
+        <div class="col">
+            
+            <div class="page-pretitle">
+                Overview
+            </div>
+            <h2 class="page-title">
+                Navbar overlap layout
+            </h2>
+        </div>
+        <div class="col-12 col-md-auto ms-auto d-print-none">
+            <div class="btn-list">
+                <span class="d-none d-sm-inline">
+                    <a href="#" class="btn btn-dark">
+                        New view
+                    </a>
+                </span>
+                <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal"
+                    data-bs-target="#modal-report">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Create new report
+                </a>
+                <a href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal"
+                    data-bs-target="#modal-report" aria-label="Create new report">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</div> -->
+{% endblock page_header %}
+
+{% block page_body %}
+<div class="row row-deck row-cards">
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader">Расходы</div>
+                </div>
+                <div class="h1 mb-3">12 000 ₽</div>
+            </div>
+            <div id="test-chart-1" class="chart-sm" style="min-height: 40px;">
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader">Средний расход за день</div>
+                </div>
+                <div class="h1 mb-3">12 000 ₽</div>
+            </div>
+            <div id="test-chart-2" class="chart-sm" style="min-height: 40px;">
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader">Баланс</div>
+                </div>
+                <div class="h1 mb-3">12 000 ₽</div>
+            </div>
+            <div id="test-chart-3" class="chart-sm" style="min-height: 40px;">
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Последние транзакции</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table card-table table-vcenter text-nowrap datatable">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Сумма</th>
+                            <th>Категория</th>
+                            <th>Счет</th>
+                            <th>Комментарий</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(20) %}
+                        <tr>
+                            <td><span class="text-muted">22.12.2022</span></td>
+                            <td>
+                                - 245,30 ₽
+                            </td>
+                            <td>
+                                Продукты и быть
+                            </td>
+
+                            <td>
+                                Тинькофф Карта
+                            </td>
+                            <td>
+                                Продукты в пятерочке
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer d-flex align-items-center">
+                <a class="m-0 ms-auto" href="#">
+                    Больше
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <polyline points="9 6 15 12 9 18"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_body %}
+
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // @formatter:off
+
+    const conf = {
+        chart: {
+            type: "area",
+            fontFamily: 'inherit',
+            height: 40.0,
+            sparkline: {
+                enabled: true
+            },
+            animations: {
+                enabled: false
+            },
+        },
+        dataLabels: {
+            enabled: false,
+        },
+        fill: {
+            opacity: .16,
+            type: 'solid'
+        },
+        stroke: {
+            width: 2,
+            lineCap: "round",
+            curve: "smooth",
+        },
+        series: [{
+            name: "Profits",
+            data: [37, 35, 44, 28, 36, 24, 65, 31, 37, 39, 62, 51, 35, 41, 35, 27, 93, 53, 61, 27, 54, 43, 19, 46, 39, 62, 51, 35, 41, 67]
+        }],
+        tooltip: {
+            theme: 'dark'
+        },
+        grid: {
+            strokeDashArray: 4,
+        },
+        xaxis: {
+            labels: {
+                padding: 0,
+            },
+            tooltip: {
+                enabled: false
+            },
+            axisBorder: {
+                show: false,
+            },
+            type: 'datetime',
+        },
+        yaxis: {
+            labels: {
+                padding: 4
+            },
+        },
+        labels: [
+            '2020-06-21', '2020-06-22', '2020-06-23', '2020-06-24', '2020-06-25', '2020-06-26', '2020-06-27', '2020-06-28', '2020-06-29', '2020-06-30', '2020-07-01', '2020-07-02', '2020-07-03', '2020-07-04', '2020-07-05', '2020-07-06', '2020-07-07', '2020-07-08', '2020-07-09', '2020-07-10', '2020-07-11', '2020-07-12', '2020-07-13', '2020-07-14', '2020-07-15', '2020-07-16', '2020-07-17', '2020-07-18', '2020-07-19', '2020-07-20'
+        ],
+        colors: [tabler.getColor("primary")],
+        legend: {
+            show: false,
+        },
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        window.ApexCharts && (new ApexCharts(document.getElementById('test-chart-1'), conf)).render();
+        window.ApexCharts && (new ApexCharts(document.getElementById('test-chart-2'), conf)).render();
+        window.ApexCharts && (new ApexCharts(document.getElementById('test-chart-3'), conf)).render();
+    });
+    // @formatter:on
+</script>
+{% endblock scripts %}
