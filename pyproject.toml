@@ -22,6 +22,7 @@ flake8 = "^6.1.0"
 flake8-annotations = "^3.0.1"
 black = "^23.10.1"
 isort = "^5.12.0"
+guardpost = "^1.0.2"
 
 [tool.poetry.group.dev.dependencies]
 blacksheep-cli = "^0.0.4"
