@@ -1,268 +1,215 @@
-{%- extends "layout.jinja" -%}
-{%- block title -%}
-BlackSheep MVC Project Template
-{%- endblock -%}
-{%- block description -%}
-Project template to create web applications with MVC architecture using BlackSheep web framework.
-{%- endblock -%}
-{%- block css -%}
-<link rel="stylesheet" href="/styles/public.css" />
-{%- endblock -%}
-{%- block body -%}
+{% extends 'layout.jinja' %}
 
-<header class="masthead bg-primary text-white text-center">
-    <div class="container d-flex align-items-center flex-column">
 
-        <!-- Masthead Avatar Image -->
-        <img class="masthead-avatar mb-5" src="images/blacksheep.png" alt="BlackSheep">
-
-        <!-- Masthead Heading -->
-        <h1 class="masthead-heading mb-0">BlackSheep is an asynchronous web framework to build event based, non-blocking
-            Python web applications</h1>
-
-        <!-- Icon Divider -->
-        <div class="divider-custom divider-light">
-            <div class="divider-custom-line"></div>
-            <div class="divider-custom-icon">
-                <i class="fas fa-star"></i>
+{% block page_header %}
+<!-- <div class="container-xl">
+    <div class="row g-2 align-items-center">
+        <div class="col">
+            
+            <div class="page-pretitle">
+                Overview
             </div>
-            <div class="divider-custom-line"></div>
+            <h2 class="page-title">
+                Navbar overlap layout
+            </h2>
         </div>
-
-        <!-- Masthead Subheading -->
-        <p class="masthead-subheading font-weight-light mb-0">fast ASGI web framework, and HTTP client for
-            <strong>Python</strong> asyncio
-        </p>
-
-    </div>
-</header>
-
-<section class="page-section portfolio" id="getting-started">
-    <div class="container">
-
-        <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Getting started</h2>
-
-        <div class="divider-custom">
-            <div class="divider-custom-line"></div>
-            <div class="divider-custom-icon">
-                <i class="fas fa-star"></i>
-            </div>
-            <div class="divider-custom-line"></div>
-        </div>
-
-        <div class="row">
-            <div class="mx-auto">
-                <ol class="text-center">
-                    <li><a href="https://www.neoteroi.dev/blacksheep/mvc-project-template/" target="_blank">Read the
-                            tutorial</a></li>
-                    <li>Familiarize with the folder structure of the project</li>
-                    <li>Learn how to define <a href="https://www.neoteroi.dev/blacksheep/request-handlers/">request
-                            handlers</a></li>
-                    <li>Familiarize with <a href="https://www.neoteroi.dev/blacksheep/dependency-injection/">DI</a> and
-                        <a href="https://www.neoteroi.dev/blacksheep/binders/">model binding</a>
-                    </li>
-                    <li>Refer to the <a href="https://www.neoteroi.dev/blacksheep/">documentation</a></li>
-                </ol>
-                <pre>
-            <code class="python">
-from dataclasses import dataclass
-from blacksheep.server.controllers import Controller, get, post, delete
-from blacksheep.server.bindings import FromJson
-
-
-@dataclass
-class Example:
-    name: str
-    foo: str
-
-
-class Home(Controller):
-
-    @get()
-    def index(self):
-        return self.view()
-
-    @post("/item")
-    def create_item(self, item: FromJson[Example]):
-        ...
-
-    @delete("/item/:item_id")
-    def delete_item(self, item_id: str):
-        ...
-            </code>
-          </pre>
-                <hr />
-                <p>It is possible to define API endpoints using the <em>Controller</em> or the <em>APIController</em>
-                    class:</p>
-                <pre>
-            <code class="python">
-from blacksheep import Response
-from blacksheep.server.controllers import APIController, delete, get, patch, post
-
-
-# In this case, the entity name is obtained from the class name: "cats"
-# To specify a @classmethod called "class_name" and returning a string, like in the
-# Foo example below.
-class Cats(APIController):
-    @get(":cat_id")
-    def get_cat(self, cat_id: str) -> Response:
-        """
-        Handles GET /api/cats/:id
-        """
-
-    @patch(":cat_id")
-    def update_cat(self, cat_id: str) -> Response:
-        """
-        Handles PATCH /api/cats/:id
-        """
-
-    @post()
-    def create_cat(self) -> Response:
-        """
-        Handles POST /api/cats
-        """
-
-    @delete(":cat_id")
-    def delete_cat(self, cat_id: str) -> Response:
-        """
-        Handles DELETE /api/cats/:id
-        """
-
-
-class FooExample(APIController):
-    @classmethod
-    def class_name(cls) -> str:
-        return "foo"
-
-    @get(":cat_id")
-    def get_cat(self, cat_id: str) -> Response:
-        """
-        Handles GET /api/foo/:id
-        """
-            </code>
-          </pre>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<!-- About Section -->
-<section class="page-section bg-primary text-white mb-0" id="about">
-    <div class="container">
-
-        <!-- About Section Heading -->
-        <h2 class="page-section-heading text-center text-uppercase text-white">About</h2>
-
-        <!-- Icon Divider -->
-        <div class="divider-custom divider-light">
-            <div class="divider-custom-line"></div>
-            <div class="divider-custom-icon">
-                <i class="fas fa-star"></i>
-            </div>
-            <div class="divider-custom-line"></div>
-        </div>
-
-        <!-- About Section Content -->
-        <div class="row">
-            <div class="col-lg-4 ml-auto">
-                <p class="lead"><a href="https://github.com/Neoteroi/BlackSheep">BlackSheep</a> is a fast web framework
-                    for <strong>Python</strong> asyncio, inspired by <a
-                        href="https://palletsprojects.com/p/flask/">Flask</a> and <a
-                        href="https://docs.microsoft.com/en-us/aspnet/core/">ASP.NET Core</a>.
-                    Its unique features, among web frameworks for <strong>Python</strong>, are built-in support for <a
-                        href="https://www.neoteroi.dev/blacksheep/dependency-injection/">dependency injection</a>, and a
-                    <a href="https://www.neoteroi.dev/blacksheep/request-handlers/">flexible model</a> to define request
-                    handlers.
-                </p>
-            </div>
-            <div class="col-lg-4 mr-auto">
-                <p class="lead"><a href="https://github.com/Neoteroi/BlackSheep">BlackSheep</a> adheres to <a
-                        href="https://asgi.readthedocs.io/en/latest/">ASGI</a>: it must be used with an HTTP server like
-                    <a href="http://www.uvicorn.org/">uvicorn</a>, <a
-                        href="https://github.com/django/daphne/">daphne</a>, or <a
-                        href="https://pgjones.gitlab.io/hypercorn/">hypercorn</a>.
-                    <br><a href="https://github.com/Neoteroi/BlackSheep">BlackSheep</a> targets the most recent versions
-                    of <strong>Python</strong> language.
-                </p>
-            </div>
-        </div>
-
-        <div class="text-center mt-4">
-            <a class="btn btn-xl btn-outline-light" href="https://github.com/Neoteroi/BlackSheepMVC">
-                <i class="fab fa-github mr-2"></i>
-                BlackSheep MVC
-            </a>
-        </div>
-
-    </div>
-</section>
-
-<!-- Contact Section -->
-<section class="page-section" id="contact">
-    <div class="container">
-
-        <!-- Contact Section Heading -->
-        <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Contact the author</h2>
-
-        <!-- Icon Divider -->
-        <div class="divider-custom">
-            <div class="divider-custom-line"></div>
-            <div class="divider-custom-icon">
-                <i class="fas fa-star"></i>
-            </div>
-            <div class="divider-custom-line"></div>
-        </div>
-
-        <!-- Contact Section Form -->
-        <div class="row">
-            <div class="text-center mx-auto">
-                <a class="btn btn-outline-light btn-social mx-1" href="https://github.com/Neoteroi">
-                    <i class="fab fa-fw fa-github"></i>
+        <div class="col-12 col-md-auto ms-auto d-print-none">
+            <div class="btn-list">
+                <span class="d-none d-sm-inline">
+                    <a href="#" class="btn btn-dark">
+                        New view
+                    </a>
+                </span>
+                <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal"
+                    data-bs-target="#modal-report">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Create new report
                 </a>
-                <a class="btn btn-outline-light btn-social mx-1" href="https://www.twitter.com/RobertoPrevato">
-                    <i class="fab fa-fw fa-twitter"></i>
-                </a>
-                <a class="btn btn-outline-light btn-social mx-1"
-                    href="https://www.linkedin.com/in/roberto-prevato-a186a650">
-                    <i class="fab fa-fw fa-linkedin-in"></i>
+                <a href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal"
+                    data-bs-target="#modal-report" aria-label="Create new report">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
                 </a>
             </div>
         </div>
-
     </div>
-</section>
+</div> -->
+{% endblock page_header %}
 
-<footer class="footer text-center">
-    <div class="container">
-        <div class="row">
-
-            <div class="text-center mx-auto">
-                <h4 class="text-uppercase mb-4">About Freelancer (this web page theme)</h4>
-                <p class="lead mb-0">Freelancer is a free to use, MIT licensed Bootstrap theme created by
-                    <a href="http://startbootstrap.com">Start Bootstrap</a>.
-                </p>
+{% block page_body %}
+<div class="row row-deck row-cards">
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader">Расходы</div>
+                </div>
+                <div class="h1 mb-3">12 000 ₽</div>
             </div>
-
+            <div id="test-chart-1" class="chart-sm" style="min-height: 40px;">
+            </div>
         </div>
     </div>
-</footer>
-
-<!-- Copyright Section -->
-<section class="copyright py-4 text-center text-white">
-    <div class="container">
-        <small>Copyright &copy; {{copy()}}</small>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader">Средний расход за день</div>
+                </div>
+                <div class="h1 mb-3">12 000 ₽</div>
+            </div>
+            <div id="test-chart-2" class="chart-sm" style="min-height: 40px;">
+            </div>
+        </div>
     </div>
-</section>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader">Баланс</div>
+                </div>
+                <div class="h1 mb-3">12 000 ₽</div>
+            </div>
+            <div id="test-chart-3" class="chart-sm" style="min-height: 40px;">
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Последние транзакции</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table card-table table-vcenter text-nowrap datatable">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Сумма</th>
+                            <th>Категория</th>
+                            <th>Счет</th>
+                            <th>Комментарий</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(20) %}
+                        <tr>
+                            <td><span class="text-muted">22.12.2022</span></td>
+                            <td>
+                                - 245,30 ₽
+                            </td>
+                            <td>
+                                Продукты и быть
+                            </td>
 
-<!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
-<div class="scroll-to-top d-lg-none position-fixed ">
-    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
-        <i class="fa fa-chevron-up"></i>
-    </a>
+                            <td>
+                                Тинькофф Карта
+                            </td>
+                            <td>
+                                Продукты в пятерочке
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer d-flex align-items-center">
+                <a class="m-0 ms-auto" href="#">
+                    Больше
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <polyline points="9 6 15 12 9 18"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+{% endblock page_body %}
 
-{%- endblock -%}
-{%- block js -%}
-<script src="/scripts/freelancer.js"></script>
-{%- endblock -%}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // @formatter:off
+
+    const conf = {
+        chart: {
+            type: "area",
+            fontFamily: 'inherit',
+            height: 40.0,
+            sparkline: {
+                enabled: true
+            },
+            animations: {
+                enabled: false
+            },
+        },
+        dataLabels: {
+            enabled: false,
+        },
+        fill: {
+            opacity: .16,
+            type: 'solid'
+        },
+        stroke: {
+            width: 2,
+            lineCap: "round",
+            curve: "smooth",
+        },
+        series: [{
+            name: "Profits",
+            data: [37, 35, 44, 28, 36, 24, 65, 31, 37, 39, 62, 51, 35, 41, 35, 27, 93, 53, 61, 27, 54, 43, 19, 46, 39, 62, 51, 35, 41, 67]
+        }],
+        tooltip: {
+            theme: 'dark'
+        },
+        grid: {
+            strokeDashArray: 4,
+        },
+        xaxis: {
+            labels: {
+                padding: 0,
+            },
+            tooltip: {
+                enabled: false
+            },
+            axisBorder: {
+                show: false,
+            },
+            type: 'datetime',
+        },
+        yaxis: {
+            labels: {
+                padding: 4
+            },
+        },
+        labels: [
+            '2020-06-21', '2020-06-22', '2020-06-23', '2020-06-24', '2020-06-25', '2020-06-26', '2020-06-27', '2020-06-28', '2020-06-29', '2020-06-30', '2020-07-01', '2020-07-02', '2020-07-03', '2020-07-04', '2020-07-05', '2020-07-06', '2020-07-07', '2020-07-08', '2020-07-09', '2020-07-10', '2020-07-11', '2020-07-12', '2020-07-13', '2020-07-14', '2020-07-15', '2020-07-16', '2020-07-17', '2020-07-18', '2020-07-19', '2020-07-20'
+        ],
+        colors: [tabler.getColor("primary")],
+        legend: {
+            show: false,
+        },
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        window.ApexCharts && (new ApexCharts(document.getElementById('test-chart-1'), conf)).render();
+        window.ApexCharts && (new ApexCharts(document.getElementById('test-chart-2'), conf)).render();
+        window.ApexCharts && (new ApexCharts(document.getElementById('test-chart-3'), conf)).render();
+    });
+    // @formatter:on
+</script>
+{% endblock scripts %}
