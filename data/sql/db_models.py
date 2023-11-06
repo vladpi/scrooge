@@ -33,6 +33,9 @@ class User(DbModelBase):
 
     id: Mapped[columns.uuid_pk]
 
+    email: Mapped[str]
+    password_hash: Mapped[str]
+
     created_at: Mapped[columns.created_at]
     updated_at: Mapped[columns.updated_at]
 
