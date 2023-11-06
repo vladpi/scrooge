@@ -42,20 +42,6 @@ class User(DbModelBase):
     avatar_url: Mapped[str | None]
 
 
-class TelegramUser(DbModelBase):
-    __tablename__ = "telegram_users"
-
-    id: Mapped[columns.int_pk]
-    user_id: Mapped[columns.users_fk] = mapped_column(unique=True)
-
-    created_at: Mapped[columns.created_at]
-    updated_at: Mapped[columns.updated_at]
-
-    username: Mapped[str | None]
-    first_name: Mapped[str | None]
-    last_name: Mapped[str | None]
-
-
 class Workspace(DbModelBase):
     __tablename__ = "workspaces"
 

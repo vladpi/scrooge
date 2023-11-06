@@ -32,21 +32,6 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id", name=op.f("pk__users")),
     )
     op.create_table(
-        "telegram_users",
-        sa.Column("id", sa.BIGINT(), autoincrement=True, nullable=False),
-        sa.Column("user_id", sa.UUID(), nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("username", sa.String(), nullable=True),
-        sa.Column("first_name", sa.String(), nullable=True),
-        sa.Column("last_name", sa.String(), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["user_id"], ["users.id"], name=op.f("fk__telegram_users__user_id__users")
-        ),
-        sa.PrimaryKeyConstraint("id", name=op.f("pk__telegram_users")),
-        sa.UniqueConstraint("user_id", name=op.f("uq__telegram_users__user_id")),
-    )
-    op.create_table(
         "workspaces",
         sa.Column("id", sa.UUID(), server_default=sa.text("gen_random_uuid()"), nullable=False),
         sa.Column("owner_id", sa.UUID(), nullable=False),
@@ -131,6 +116,5 @@ def downgrade() -> None:
     op.drop_table("categories")
     op.drop_table("accounts")
     op.drop_table("workspaces")
-    op.drop_table("telegram_users")
     op.drop_table("users")
     # ### end Alembic commands ###
