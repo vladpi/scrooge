@@ -23,6 +23,9 @@ flake8-annotations = "^3.0.1"
 black = "^23.10.1"
 isort = "^5.12.0"
 guardpost = "^1.0.2"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+blacksheep-sqlalchemy = "^0.0.2"
+python-dotenv = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 blacksheep-cli = "^0.0.4"
