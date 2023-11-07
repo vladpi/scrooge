@@ -1,30 +1,7 @@
-from blacksheep import Application, Request
-from guardpost.authentication import AuthenticationHandler, Identity
+from blacksheep import Application
+from blacksheep.server.authentication.cookie import CookieAuthentication
 
 from app.settings import Settings
-
-
-class ExampleAuthHandler(AuthenticationHandler):
-    def __init__(self) -> None:
-        pass
-
-    async def authenticate(self, context: Request) -> Identity | None:
-        # TODO: apply the desired logic to obtain a user's identity from
-        # information in the web request, for example reading a piece of
-        # information from a header (or cookie).
-        header_value = context.get_first_header(b"Authorization")
-
-        if header_value:
-            # implement your logic to obtain the user
-            # in this example, an identity is hard-coded just to illustrate
-            # testing in the next paragraph
-            context.identity = Identity({"name": "Jan Kowalski"}, "MOCK")
-        else:
-            # if the request cannot be authenticated, set the context.identity
-            # to None - do not throw exception because the app might support
-            # different ways to authenticate users
-            context.identity = None
-        return context.identity
 
 
 def configure_authentication(app: Application, settings: Settings) -> None:
@@ -33,4 +10,6 @@ def configure_authentication(app: Application, settings: Settings) -> None:
     https://www.neoteroi.dev/blacksheep/authentication/
     """
 
-    app.use_authentication().add(ExampleAuthHandler())
+    auth_handler = CookieAuthentication()  # TODO add explicit read secret keys from settings
+    app.services.add_instance(auth_handler)
+    app.use_authentication().add(auth_handler)

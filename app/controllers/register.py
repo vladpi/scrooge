@@ -1,8 +1,16 @@
-from blacksheep import Response
-from blacksheep.server.controllers import Controller, get
+from blacksheep import FromForm, Response
+from blacksheep.server.authentication.cookie import CookieAuthentication
+from blacksheep.server.controllers import Controller, get, post
+
+from domain.users import CreateUserInput, UsersService
 
 
 class Register(Controller):
+    def __init__(self, users_service: UsersService, auth_handler: CookieAuthentication) -> None:
+        super().__init__()
+        self.users_service = users_service
+        self.auth_handler = auth_handler
+
     @classmethod
     def route(cls) -> str | None:
         return "register"
@@ -16,3 +24,12 @@ class Register(Controller):
         # obtained from the calling request handler: 'index',
         # -> /views/home/index.html
         return self.view()
+
+    @post()
+    async def register_user(self, data: FromForm[CreateUserInput]) -> Response:
+        user = await self.users_service.create_user(data.value)
+
+        response = self.redirect("/")
+        self.auth_handler.set_cookie({"id": str(user.id), "foo": "bar"}, response)
+
+        return response
