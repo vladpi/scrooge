@@ -30,16 +30,21 @@ class Site(BaseModel):
     copyright: str
 
 
+class DB(BaseModel):
+    connection_url: str
+
+
 class Settings(BaseModel):
     app: App
     info: APIInfo
     site: Site
+    db: DB
 
 
 def default_configuration_builder() -> ConfigurationBuilder:
     app_env = get_env()
     builder = ConfigurationBuilder(
-        YAMLFile(f"settings.yaml"),
+        YAMLFile("settings.yaml"),
         YAMLFile(f"settings.{app_env.lower()}.yaml", optional=True),
         EnvVars("APP_"),
     )

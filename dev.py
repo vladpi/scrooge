@@ -7,6 +7,7 @@ Refer to https://www.uvicorn.org/deployment/ for production deployments.
 import os
 
 import uvicorn
+from dotenv import load_dotenv
 from rich.console import Console
 
 try:
@@ -17,6 +18,8 @@ else:
     uvloop.install()
 
 if __name__ == "__main__":
+    load_dotenv()
+
     os.environ["APP_ENV"] = "dev"
     port = int(os.environ.get("APP_PORT", 44777))
 

@@ -2,6 +2,7 @@
 This module configures the BlackSheep application before it starts.
 """
 from blacksheep import Application
+from blacksheepsqlalchemy import use_sqlalchemy
 from rodi import Container
 
 from app.auth import configure_authentication
@@ -21,6 +22,9 @@ def configure_application(
     configure_error_handlers(app)
     configure_authentication(app, settings)
     configure_templating(app, settings)
+
+    use_sqlalchemy(app, connection_string=settings.db.connection_url)
+
     return app
 
 
