@@ -33,7 +33,7 @@ class User(DbModelBase):
 
     id: Mapped[columns.uuid_pk]
 
-    email: Mapped[str]
+    email: Mapped[str] = mapped_column(unique=True)
     password_hash: Mapped[str]
 
     created_at: Mapped[columns.created_at]
