@@ -25,6 +25,15 @@ class User:
     def full_name(self) -> str:
         return " ".join(filter(None, [self.first_name, self.last_name]))
 
+    @property
+    def initials(self) -> str:
+        i = ""
+        if self.first_name is not None:
+            i += self.first_name[0]
+        if self.last_name is not None:
+            i += self.last_name
+        return i.upper()
+
 
 @dataclass
 class CreateUserInput:
