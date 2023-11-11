@@ -10,18 +10,20 @@
         </div>
         <div class="card card-md">
             <div class="card-body">
-                <h2 class="card-title text-center mb-4">Войти в аккаунт</h2>
-                <div class="mb-3">
-                    <label class="form-label">E-mail адрес</label>
-                    <input type="email" class="form-control" placeholder="Введи свой e-mail">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Пароль</label>
-                    <input type="password" class="form-control" placeholder="Введи свой пароль" autocomplete="off">
-                </div>
-                <div class="form-footer">
-                    <button type="submit" class="btn btn-primary w-100">Войти</button>
-                </div>
+                <form method="post">
+                    <h2 class="card-title text-center mb-4">Войти в аккаунт</h2>
+                    <div class="mb-3">
+                        <label class="form-label">E-mail адрес</label>
+                        <input name="email" type="email" class="form-control" placeholder="Введи свой e-mail">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <input name="password" type="password" class="form-control" placeholder="Введи свой пароль" autocomplete="off">
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" class="btn btn-primary w-100">Войти</button>
+                    </div>
+                </form>
             </div>
             <div class="hr-text">или</div>
             <div class="card-body">
@@ -49,7 +51,7 @@
             </div>
         </div>
         <div class="text-center text-secondary mt-3">
-          Еще нет аккаунта? <a href="/register" tabindex="-1">Зарегистрируйся!</a>
+            Еще нет аккаунта? <a href="/register" tabindex="-1">Зарегистрируйся!</a>
         </div>
     </div>
 </div>

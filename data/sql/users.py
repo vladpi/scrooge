@@ -31,3 +31,23 @@ class SQLUsersRepository:
             row = result.one()
 
         return user_model_to_user(row)  # type: ignore
+
+    async def get_user(self, user_id: UserId) -> User | None:
+        async with self._db_engine.begin() as conn:
+            query = sa.select(models.User).where(models.User.id == user_id)
+
+            result = await conn.execute(query)
+            row = result.one()
+
+        if row is not None:
+            return user_model_to_user(row)  # type: ignore
+
+    async def get_user_by_email(self, email: str) -> User | None:
+        async with self._db_engine.begin() as conn:
+            query = sa.select(models.User).where(models.User.email == email)
+
+            result = await conn.execute(query)
+            row = result.one()
+
+        if row is not None:
+            return user_model_to_user(row)  # type: ignore

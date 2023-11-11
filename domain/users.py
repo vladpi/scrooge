@@ -52,6 +52,9 @@ class UsersRepository(Protocol):
     async def create_user(self, data: User) -> User:
         pass
 
+    async def get_user_by_email(self, email: str) -> User | None:
+        pass
+
 
 class UsersService:
     def __init__(
@@ -81,5 +84,16 @@ class UsersService:
 
         if user is None:
             raise ValueError("User not found")  # FIXME custom exception
+
+        return user
+
+    async def authenticate_user_by_email(self, email: str, password: str) -> User:
+        user = await self.users_repository.get_user_by_email(email)
+
+        if user is None:
+            raise ValueError("User not found")  # FIXME custom exception
+
+        if not self.passwords_service.verify_password(password, user.password_hash):
+            raise ValueError("Wrong password")  # FIXME custom exception
 
         return user
