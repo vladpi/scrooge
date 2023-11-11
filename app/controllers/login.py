@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from blacksheep import FromForm, Response
 from blacksheep.server.authentication.cookie import CookieAuthentication
+from blacksheep.server.authorization import allow_anonymous
 from blacksheep.server.controllers import Controller, get, post
 
 from domain.users import UsersService
@@ -23,6 +24,7 @@ class Login(Controller):
     def route(cls) -> str | None:
         return "login"
 
+    @allow_anonymous()
     @get()
     def index(self) -> Response:
         # Since the @get() decorator is used without arguments, the URL path
@@ -33,6 +35,7 @@ class Login(Controller):
         # -> /views/home/index.html
         return self.view()
 
+    @allow_anonymous()
     @post()
     async def login_user(self, data: FromForm[LoginUserForm]) -> Response:
         user = await self.users_service.authenticate_user_by_email(

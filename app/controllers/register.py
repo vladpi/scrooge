@@ -1,5 +1,6 @@
 from blacksheep import FromForm, Response
 from blacksheep.server.authentication.cookie import CookieAuthentication
+from blacksheep.server.authorization import allow_anonymous
 from blacksheep.server.controllers import Controller, get, post
 
 from domain.users import CreateUserInput, UsersService
@@ -15,6 +16,7 @@ class Register(Controller):
     def route(cls) -> str | None:
         return "register"
 
+    @allow_anonymous()
     @get()
     def index(self) -> Response:
         # Since the @get() decorator is used without arguments, the URL path
@@ -25,6 +27,7 @@ class Register(Controller):
         # -> /views/home/index.html
         return self.view()
 
+    @allow_anonymous()
     @post()
     async def register_user(self, data: FromForm[CreateUserInput]) -> Response:
         user = await self.users_service.create_user(data.value)

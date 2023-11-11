@@ -2,7 +2,7 @@ from typing import Any
 
 from blacksheep import Request, Response
 from blacksheep.server import Application
-from blacksheep.server.responses import text
+from blacksheep.server.responses import redirect, text
 from essentials.exceptions import (
     AcceptedException,
     ForbiddenException,
@@ -10,6 +10,7 @@ from essentials.exceptions import (
     ObjectNotFound,
     UnauthorizedException,
 )
+from guardpost import UnauthorizedError
 
 
 def configure_error_handlers(app: Application) -> None:
@@ -22,7 +23,7 @@ def configure_error_handlers(app: Application) -> None:
         return text("Not implemented", status=500)
 
     async def unauthorized(*args: Any) -> Response:
-        return text("Unauthorized", status=401)
+        return redirect("/login")
 
     async def forbidden(*args: Any) -> Response:
         return text("Forbidden", status=403)
@@ -35,6 +36,7 @@ def configure_error_handlers(app: Application) -> None:
             ObjectNotFound: not_found_handler,
             NotImplementedException: not_implemented,
             UnauthorizedException: unauthorized,
+            UnauthorizedError: unauthorized,
             ForbiddenException: forbidden,
             AcceptedException: accepted,
         }

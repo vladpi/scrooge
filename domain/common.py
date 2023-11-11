@@ -4,11 +4,13 @@ Common domain models reused across several API endpoints.
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Generic, TypeVar
+from typing import Generator, Generic, TypeVar
 
 from pydantic import BaseModel, Field, conint
 
 T = TypeVar("T")
+
+Authenticated = "authenticated"
 
 
 @dataclass(slots=True)
@@ -16,7 +18,7 @@ class PaginatedSet(Generic[T]):
     items: list[T]
     total: int
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[T, None, None]:
         yield from self.items
 
     def __len__(self) -> int:
