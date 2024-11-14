@@ -1,8 +1,0 @@
----
-info:
-  title: "scrooge1 API"
-  version: 0.0.1
-app:
-  show_error_details: false
-site:
-  copyright: Example
