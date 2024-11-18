@@ -10,21 +10,29 @@ if TYPE_CHECKING:
 
 from app import db
 
-@get("/")
-async def get_transactions(
-    categories_repo: db.CategoriesRepository,
-    transactions_repo: db.TransactionsRepository,
-) -> Template:
-    categories = await categories_repo.list()
-    transactions = await transactions_repo.list(
-        db.Transaction.category_id.is_(None), order_by=(db.Transaction.datetime, False)
-    )
 
-    context = {"transactions": transactions, "categories": categories}
+@get("/")
+async def get_transactions() -> Template:
     return HTMXTemplate(
         template_name="transactions/index.html",
+    )
+
+
+@get("/sorted")
+async def get_sorted_transactions(
+    transactions_repo: db.TransactionsRepository,
+) -> Template:
+    transactions = await transactions_repo.list(
+        db.Transaction.category_id.is_not(None),
+        order_by=(db.Transaction.datetime, False),
+    )
+
+    context = {"transactions": transactions}
+    return HTMXTemplate(
+        template_name="transactions/partial/sorted_transactions.html",
         context=context,
     )
+
 
 @get("/unsorted")
 async def get_unsorted_transactions(
@@ -71,6 +79,7 @@ transactions_router = Router(
     path="/transactions",
     route_handlers=[
         get_transactions,
+        get_sorted_transactions,
         get_unsorted_transactions,
         update_transaction_category,
     ],

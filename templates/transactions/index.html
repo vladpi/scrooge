@@ -1,27 +1,50 @@
-{% extends 'layout.html' %}
-
-{% block page_header %}
+{% extends 'layout.html' %} {% block page_header %}
 <div class="container-xl">
-    <div class="row g-2 align-items-center">
-        <div class="col">
-            <h2 class="page-title">
-                Транзакции
-            </h2>
-        </div>
+  <div class="row g-2 align-items-center">
+    <div class="col">
+      <h2 class="page-title">Транзакции</h2>
     </div>
+  </div>
 </div>
-{% endblock page_header %}
+{% endblock page_header %} {% block page_body %}
+<ul
+  class="nav nav-bordered mb-4"
+  hx-target="#transactions-list"
+  hx-on:htmx-after-on-load="let currentTab = document.querySelector('[aria-selected=true]');
+                            currentTab.setAttribute('aria-selected', 'false')
+                            currentTab.classList.remove('active')
+                            let newTab = event.target
+                            newTab.setAttribute('aria-selected', 'true')
+                            newTab.classList.add('active')"
+>
+  <li class="nav-item">
+    <a
+      class="nav-link active"
+      aria-selected="true"
+      hx-get="/transactions/sorted"
+      hx-trigger="click"
+      href="#"
+    >
+      Сортированные
+    </a>
+  </li>
+  <li class="nav-item">
+    <a
+      class="nav-link"
+      aria-selected="false"
+      hx-get="/transactions/unsorted"
+      hx-trigger="click"
+      href="#"
+      hx-target="#transactions-list"
+    >
+      Несортированные
+    </a>
+  </li>
+</ul>
 
-{% block page_body %}
-<ul class="nav nav-bordered mb-4">
-    <li class="nav-item">
-      <a class="nav-link active" aria-current="page" href="#">Сортированные</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">Несортированные</a>
-    </li>
-  </ul>
-
-<div hx-get="/transactions/unsorted" hx-trigger="load" hx-swap="outerHTML">
-</div>
+<div
+  id="transactions-list"
+  hx-get="/transactions/sorted"
+  hx-trigger="load"
+></div>
 {% endblock page_body %}

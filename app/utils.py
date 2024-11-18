@@ -9,6 +9,7 @@ from app.consts import MOSCOW_TIMEZONE
 
 TRANSACTIONS_CSV_PATH = pathlib.Path(os.environ["TRANSACTIONS_CSV_PATH"])
 
+
 async def load_tinkoff_transactions(app: Litestar):
     async with db.config.get_session() as session:
         statement = sa.select(sa.func.count()).select_from(db.Transaction)

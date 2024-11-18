@@ -1,1 +1,1 @@
-from .transactions import transactions_router
+from .transactions import transactions_router as transactions_router

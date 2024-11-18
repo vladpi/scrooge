@@ -12,20 +12,6 @@
           <p class="text-secondary mb-0">{{ t.description }}</p>
         </div>
       </div>
-      {% if loop.index == 1 %}
-      <div class="card-body p-3">
-        {% for c in categories %}
-        <button
-          class="btn btn-outline-secondary m-1"
-          hx-post="/transactions/{{t.id}}/category/{{c.id}}"
-          hx-target="#unsorted-transactions-list"
-          hx-swap="outerHTML"
-        >
-          {% if c.icon %}{{c.icon}}{% endif %}{{ c.name }}
-        </button>
-        {% endfor %}
-      </div>
-      {% endif %}
     </div>
   </div>
   {% endfor %}
