@@ -12,9 +12,12 @@ from app import db
 
 
 @get("/")
-async def get_transactions() -> Template:
+async def get_transactions(transactions_repo: db.TransactionsRepository) -> Template:
+    unsorted_transactions_count = await transactions_repo.count(db.Transaction.category_id.is_(None))
+    context = {"unsorted_transactions_count": unsorted_transactions_count}
     return HTMXTemplate(
         template_name="transactions/index.html",
+        context=context,
     )
 
 
